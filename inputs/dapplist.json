@@ -1,7 +1,26 @@
 {
     "polygon": [
         {
-            "name": "A"
+            "name": "string",
+            "contractAddress": "string",
+            "tagline": "string",
+            "summary": "string",
+            "description": "string",
+            "logoURI": "string",
+            "homePageURI": "string",
+            "bannerImageURI": "string",
+            "backgroundImageURI": "string",
+            "primaryColor": "string",
+            "secondaryColor": "string",
+            "socials": [{
+              "name": "string",
+              "profileURI": "string",
+              "iconURI": "string"
+            }],
+            "screenshots": [{
+              "text": "string",
+              "imageURI": "string"
+            }]
         }
     ]
 }
