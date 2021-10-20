@@ -1,0 +1,11 @@
+node_modules
+.env*
+.secret
+.infuraid
+
+#Hardhat files
+cache
+artifacts
+
+# other
+build

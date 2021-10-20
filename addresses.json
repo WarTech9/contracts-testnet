@@ -1,0 +1,16 @@
+{
+    "testnet": {
+        "localhost": {
+            "dappstore": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+            "dappmetrics": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        },
+        "harmony": {
+            "dappstore": "0x2F59Dd801e498a4E80454cbf022313eAB7C5d511",
+            "dappmetrics": "0x12110BA7e972D03f90fCDe07F92e603f9D1ED982"
+        },
+        "polygon": {
+            "dappstore": "0xE345C0A49C81B959CA602bFa66A4052776237E9f",
+            "dappmetrics": "0xeEFCF1573D07DeC3dF79964a6C2cE51fa10B8458"
+        }
+    }
+}
