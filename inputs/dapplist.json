@@ -1,26 +1,487 @@
 {
-    "polygon": [
+  "polygon": [
+    {
+      "name": "AAVE",
+      "contractAddress": "string",
+      "tagline": "The Liquidity Protocol",
+      "summary": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+      "description": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
         {
-            "name": "string",
-            "contractAddress": "string",
-            "tagline": "string",
-            "summary": "string",
-            "description": "string",
-            "logoURI": "string",
-            "homePageURI": "string",
-            "bannerImageURI": "string",
-            "backgroundImageURI": "string",
-            "primaryColor": "string",
-            "secondaryColor": "string",
-            "socials": [{
-              "name": "string",
-              "profileURI": "string",
-              "iconURI": "string"
-            }],
-            "screenshots": [{
-              "text": "string",
-              "imageURI": "string"
-            }]
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
         }
-    ]
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "defi",
+      "tags": [
+        "dapps",
+        "defi"
+      ]
+    },
+    {
+      "name": "QuickSwap",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "defi",
+      "tags": [
+        "dapps",
+        "defi"
+      ]
+    },
+    {
+      "name": "1Inch",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "dapps",
+        "defi"
+      ]
+    },
+    {
+      "name": "Beefy Finance",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Badger DAO",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "DODO",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Curve Finance",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Polydoge",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Hapi Protocol",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Snapshot",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Open Sea",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Terra Virtua",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Neon District",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Aavegotchi",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Decentraland",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "name": "Gala Games",
+      "contractAddress": "string",
+      "tagline": "string",
+      "summary": "string",
+      "description": "string",
+      "logoURI": "string",
+      "homePageURI": "string",
+      "bannerImageURI": "string",
+      "backgroundImageURI": "string",
+      "primaryColor": "string",
+      "secondaryColor": "string",
+      "socials": [
+        {
+          "name": "string",
+          "profileURI": "string",
+          "iconURI": "string"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "string",
+          "imageURI": "string"
+        }
+      ],
+      "category": "string",
+      "tags": [
+        "string"
+      ]
+    }
+  ]
 }
