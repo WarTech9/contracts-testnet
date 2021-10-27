@@ -1,0 +1,41 @@
+{
+    "name": "Decentraland",
+    "contractAddress": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "",
+    "summary": "Create, explore and trade in the first-ever virtual world owned by its users.",
+    "description": "Decentraland is a virtual game world run by its users. Every piece of land and every item in the virtual land is a non-fungible token. Some of them sell for thousands of dollars.",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmYCKFc1CgR9mSLdKz3hKV6v2ThNZQxij7NCrSR2898SRn",
+    "homePageURI": "https://decentraland.org/",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/decentraland"
+      },
+      {
+        "name": "github",
+        "profileURI": "https://github.com/decentraland"
+      },
+      {
+        "name": "reddit",
+        "profileURI": "https://reddit.com/r/decentraland"
+      },
+      {
+        "name": "discord",
+        "profileURI": "https://dcl.gg/discord"
+      }
+    ],
+    "screenshots": [
+    ],
+    "category": "gaming",
+    "tags": [
+      "nft",
+      "gaming",
+      "dapp"
+    ]
+  }

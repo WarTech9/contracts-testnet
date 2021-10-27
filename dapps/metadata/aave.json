@@ -1,0 +1,52 @@
+{
+    "name": "AAVE",
+    "contractAddress": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "The Liquidity Protocol",
+    "summary": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+    "description": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmSaUENg7t2tDQjDQYzfYiFyiVz77tWLh3FpvpKmKB8Q5Z",
+    "homePageURI": "https://aave.com",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "B6509E",
+    "secondaryColor": "2EBAC6",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/aaveaave"
+      },
+      {
+        "name": "instagram",
+        "profileURI": "https://www.instagram.com/aave.aave/"
+      },
+      {
+        "name": "telegram",
+        "profileURI": "https://t.me/Aavesome"
+      },
+      {
+        "name": "github",
+        "profileURI": "https://github.com/aave/aave-protocol"
+      },
+      {
+        "name": "discord",
+        "profileURI": "https://aave.com/discord"
+      }
+    ],
+    "screenshots": [
+      {
+        "text": "Dashboard",
+        "imageURI": "https://gateway.pinata.cloud/ipfs/QmUujpzUsJ5k2sA9JDkXSGEqEuDz3x4JrrCTG1662VcAgH/Screen%20Shot%202021-10-25%20at%205.13.52%20PM.png"
+      },
+      {
+        "text": "Pool",
+        "imageURI": "https://gateway.pinata.cloud/ipfs/QmUujpzUsJ5k2sA9JDkXSGEqEuDz3x4JrrCTG1662VcAgH/Screen%20Shot%202021-10-25%20at%205.21.15%20PM.png"
+      }
+    ],
+    "category": "defi",
+    "tags": [
+      "dapps",
+      "defi"
+    ]
+  }

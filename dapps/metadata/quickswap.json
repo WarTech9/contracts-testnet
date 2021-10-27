@@ -1,0 +1,40 @@
+{
+    "name": "QuickSwap",
+    "contractAddress": "0x6c28aef8977c9b773996d0e8376d2ee379446f2f",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "",
+    "summary": "Next-gen Layer 2 DEX. Trade at lightning-fast speeds with near-zero gas fees.",
+    "description": "Next-gen Layer 2 DEX. Trade at lightning-fast speeds with near-zero gas fees.",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmU53AyqwtTXm7WvZmxLTtHMJ5h1bUv4Ss4oYvhhmtBSqR",
+    "homePageURI": "https://quickswap.exchange",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "227af6",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/QuickswapDEX"
+      },
+      {
+        "name": "telegram",
+        "profileURI": "https://t.me/QuickSwapDEX"
+      }
+    ],
+    "screenshots": [
+      {
+        "text": "swap",
+        "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.32.20%20PM.png"
+      },
+      { 
+          "text": "Pool",
+          "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.33.09%20PM.png"
+      }
+    ],
+    "category": "defi",
+    "tags": [
+      "dapp",
+      "defi"
+    ]
+  }

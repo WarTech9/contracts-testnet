@@ -1,0 +1,28 @@
+{
+    "name": "Aavegotchi",
+    "contractAddress": "0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "Digital frens for the crypto generation",
+    "summary": "Aavegotchi is a DeFi-focused non-fungible token (NFT) that runs on the Aave protocol. Simply put, Aavegotchis are game avatars that can be used as DeFi collateral to earn staking rewards",
+    "description": "Aavegotchi is a DeFi-focused non-fungible token (NFT) that runs on the Aave protocol. Simply put, Aavegotchis are game avatars that can be used as DeFi collateral to earn staking rewards",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmZfCiA3TUFxmt9ijUGv13MJJmgWrzBe6LP5LTGKPnsV2e",
+    "homePageURI": "https://aavegotchi.com/",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "9800f7",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/aavegotchi"
+      }
+    ],
+    "screenshots": [
+    ],
+    "category": "nft",
+    "tags": [
+      "nft",
+      "gaming"
+    ]
+  }

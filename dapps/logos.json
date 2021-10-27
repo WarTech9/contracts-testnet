@@ -1,0 +1,29 @@
+{
+    "aave": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmSaUENg7t2tDQjDQYzfYiFyiVz77tWLh3FpvpKmKB8Q5Z"
+    },
+    "quickswap": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmU53AyqwtTXm7WvZmxLTtHMJ5h1bUv4Ss4oYvhhmtBSqR"
+    },
+    "1inch": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmaiSBT1pLHvjfiiQ6o63J2habJF1N4coFmMJphxTurrar"
+    },
+    "balancer": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmNgZB76BnHANNE2rgjaPu1w9qf2JkwbYrRp7QfSnYhgP5"
+    },
+    "beefy": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmUYE8ptwndZyZGUGS1HYTuB2sBwmf8LiLhkes4AkAyatL"
+    },
+    "dodo": {
+        "primary": "https://gateway.pinata.cloud/ipfs/QmcrSKUPS32gWQTzpUwXfc7xeXKXv1kSUe4mVpSgyTbcmK"
+    },
+    "decentraland": {
+        "primary": ""
+    },
+    "terra virtua": {
+        "primary": ""
+    },
+    "aavegotchi": {
+        "primary": ""
+    }
+}

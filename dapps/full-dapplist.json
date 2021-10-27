@@ -1,0 +1,527 @@
+{
+    "polygon": [
+      {
+        "name": "AAVE",
+        "contractAddress": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "The Liquidity Protocol",
+        "summary": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+        "description": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
+        "logoURI": "string",
+        "homePageURI": "aave.com",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "defi",
+        "tags": [
+          "dapps",
+          "defi"
+        ]
+      },
+      {
+        "name": "QuickSwap",
+        "contractAddress": "0x6c28aef8977c9b773996d0e8376d2ee379446f2f",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "Next-gen Layer 2 DEX. Trade at lightning-fast speeds with near-zero gas fees.",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "swap",
+            "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.32.20%20PM.png"
+          },
+          {
+              "text": "Pool",
+              "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.33.09%20PM.png"
+          }
+        ],
+        "category": "defi",
+        "tags": [
+          "dapps",
+          "defi"
+        ]
+      },
+      {
+        "name": "1Inch",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "dapps",
+          "defi"
+        ]
+      },
+      {
+        "name": "Beefy Finance",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Badger DAO",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "DODO",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "Dododex a companion app for ARK: Survival Evolved. Using the Taming Calculator, you can estimate how long it’ll take to tame almost any dinosaur as well as the food and narcotics required for each.",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Curve Finance",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "Curve exchange liquidity pool.",
+        "summary": "Curve is an exchange liquidity pool on Ethereum (like Uniswap) designed for: extremely efficient stablecoin trading low risk, supplemental fee income for liquidity providers, without an opportunity cost.",
+        "description": "Curve is an exchange liquidity pool on Ethereum (like Uniswap) designed for: extremely efficient stablecoin trading low risk, supplemental fee income for liquidity providers, without an opportunity cost.",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Balancer",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
+        "description": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
+        "logoURI": "https://gateway.pinata.cloud/ipfs/QmNgZB76BnHANNE2rgjaPu1w9qf2JkwbYrRp7QfSnYhgP5",
+        "homePageURI": "https://balancer.fi/",
+        "bannerImageURI": "",
+        "backgroundImageURI": "",
+        "primaryColor": "ffffff",
+        "secondaryColor": "000000",
+        "socials": [
+          {
+            "name": "twitter",
+            "profileURI": "https://twitter.com/BalancerLabs",
+            "iconURI": "string"
+          },
+          {
+              "name": "discord",
+              "profileURI": "https://discord.com/invite/ARJWaeF"
+          },
+          {
+              "name": "github",
+              "profileURI": "https://github.com/balancer-labs/"
+          }
+        ],
+        "screenshots": [
+        ],
+        "category": "defi",
+        "tags": [
+          "defi"
+        ]
+      },
+      {
+        "name": "Hapi Protocol",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Snapshot",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Open Sea",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Terra Virtua",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Neon District",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Aavegotchi",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Decentraland",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "Create, explore and trade in the first-ever virtual world owned by its users.",
+        "description": "Decentraland is a virtual game world run by its users. Every piece of land and every item in the virtual land is a non-fungible token. Some of them sell for thousands of dollars.",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      },
+      {
+        "name": "Gala Games",
+        "contractAddress": "string",
+        "network": "Polygon",
+        "chainId": "137",
+        "tagline": "string",
+        "summary": "string",
+        "description": "string",
+        "logoURI": "string",
+        "homePageURI": "string",
+        "bannerImageURI": "string",
+        "backgroundImageURI": "string",
+        "primaryColor": "string",
+        "secondaryColor": "string",
+        "socials": [
+          {
+            "name": "string",
+            "profileURI": "string",
+            "iconURI": "string"
+          }
+        ],
+        "screenshots": [
+          {
+            "text": "string",
+            "imageURI": "string"
+          }
+        ],
+        "category": "string",
+        "tags": [
+          "string"
+        ]
+      }
+    ]
+  }

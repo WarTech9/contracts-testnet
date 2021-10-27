@@ -1,0 +1,35 @@
+{
+    "name": "Balancer",
+    "contractAddress": "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "",
+    "summary": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
+    "description": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmNgZB76BnHANNE2rgjaPu1w9qf2JkwbYrRp7QfSnYhgP5",
+    "homePageURI": "https://balancer.fi/",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "ffffff",
+    "secondaryColor": "000000",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/BalancerLabs"
+      },
+      {
+          "name": "discord",
+          "profileURI": "https://discord.com/invite/ARJWaeF"
+      },
+      {
+          "name": "github",
+          "profileURI": "https://github.com/balancer-labs/"
+      }
+    ],
+    "screenshots": [
+    ],
+    "category": "defi",
+    "tags": [
+      "defi"
+    ]
+  }

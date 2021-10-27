@@ -1,0 +1,32 @@
+{
+    "name": "1inch",
+    "contractAddress": "0x111111111117dc0aa78b770fa6a738034120c302",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "1inch Network - The DeFi / DEX Aggregator",
+    "summary": "DeFi / DEX aggregator with the most liquidity and the best rates on Ethereum and Binance Smart Chain, 1inch dApp is an entry point to the 1inch Network’s tech.",
+    "description": "DeFi / DEX aggregator with the most liquidity and the best rates on Ethereum and Binance Smart Chain, 1inch dApp is an entry point to the 1inch Network’s tech.",
+    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmaiSBT1pLHvjfiiQ6o63J2habJF1N4coFmMJphxTurrar",
+    "homePageURI": "",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "0a121d",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/1inch"
+      },
+      {
+        "name": "reddit",
+        "profileURI": "https://reddit.com/r/1inch"
+      }
+    ],
+    "screenshots": [
+    ],
+    "category": "defi",
+    "tags": [
+      "dapp",
+      "defi"
+    ]
+  }
