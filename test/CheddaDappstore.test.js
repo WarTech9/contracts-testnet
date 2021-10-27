@@ -9,7 +9,8 @@ const dappName = "My Awesome Dapp";
 const dappNetwork = "Ethereum";
 const dappChainId = 1;
 const dappAddress = "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec";
-const dappUri = "https://app.myawesomedapp.com";
+const dappUri = "https://app.myawesomedapp.com"
+const dappCategory = "defi"
 
 beforeEach(async function () {
   CheddaDappStore = await ethers.getContractFactory("CheddaDappStore");
@@ -27,6 +28,7 @@ describe("CheddaDappStore", function () {
       dappNetwork,
       dappChainId,
       dappAddress,
+      dappCategory,
       dappUri
     );
     numberOfDapps = await dappStore.numberOfDapps();
@@ -51,6 +53,7 @@ describe("CheddaDappStore", function () {
       dapp2Network,
       dapp2ChainId,
       dapp2Address,
+      dappCategory,
       dapp2Uri
     );
 
@@ -70,6 +73,7 @@ describe("CheddaDappStore", function () {
       dappNetwork,
       dappChainId,
       dappAddress,
+      dappCategory,
       dappUri
     );
     let numberOfDapps = await dappStore.numberOfDapps();
@@ -86,6 +90,7 @@ describe("CheddaDappStore", function () {
       dappNetwork,
       dappChainId,
       dappAddress,
+      dappCategory,
       dappUri
     );
     let likes = await dappStore.likes(dappAddress);
@@ -108,4 +113,44 @@ describe("CheddaDappStore", function () {
     expect(likes).to.equal(2);
   });
 
+
+  it("Can categorize dapps", async function() {
+    const defi = "DeFi"
+    const nft = "NFT"
+    
+    await dappStore.addDapp(
+      "UniSwap",
+      dappNetwork,
+      dappChainId,
+      "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
+      defi,
+      dappUri
+    ); 
+    await dappStore.addDapp(
+      "SushiSwap",
+      dappNetwork,
+      dappChainId,
+      "0xbda5747bfd65f08deb54cb465eb87d40e51b197e",
+      defi,
+      dappUri
+    );
+
+    await dappStore.addDapp(
+      "Bloot",
+      dappNetwork,
+      dappChainId,
+      "0xdd2fd4581271e230360230f9337d5c0430bf44c0",
+      nft,
+      dappUri
+    );
+
+    const numberInDefi = await dappStore.numberOfDappsInCategory(defi)
+    expect(numberInDefi).to.equal(2)
+
+    const numberInNFT = await dappStore.numberOfDappsInCategory(nft)
+    expect(numberInNFT).to.equal(1)
+
+    const defiDapps = await dappStore.getDappsInCategory(defi)
+    expect(defiDapps.length).to.equal(2)
+  });
 });

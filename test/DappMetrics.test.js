@@ -12,6 +12,7 @@ const dappName = "Best Dapp";
 const dappNetwork = "Ethereum";
 const dappChainId = 1;
 const dappUri =  "http://myaddress.com"
+const dappCategory = "defi"
 
 beforeEach(async function () {
   const signers = await ethers.getSigners();
@@ -34,6 +35,7 @@ describe("DappMetrics", function () {
       dappNetwork,
       dappChainId,
       dappAddress,
+      dappCategory,
       dappUri,
     );
 
@@ -57,6 +59,7 @@ describe("DappMetrics", function () {
       dappNetwork,
       dappChainId,
       dappAddress,
+      dappCategory,
       dappUri
     );
 

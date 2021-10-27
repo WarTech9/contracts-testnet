@@ -4,6 +4,11 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const ethers = require("ethers")
+const fs = require('fs');
+
+let dappStore
+let dappMetrics
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -15,15 +20,32 @@ async function main() {
 
   // We get the contract to deploy
   const CheddaStore = await hre.ethers.getContractFactory("CheddaDappStore");
-  const store = await CheddaStore.deploy();
-  await store.deployed();
+  dappStore = await CheddaStore.deploy();
+  await dappStore.deployed();
 
   const DappMetrics = await hre.ethers.getContractFactory("DappMetrics");
-  const metrics = await DappMetrics.deploy(store.address);
-  await metrics.deployed();
+  dappMetrics = await DappMetrics.deploy(dappStore.address);
+  await dappMetrics.deployed();
 
-  console.log("CheddaDappStore deployed to:", store.address);
-  console.log("DappMetrics deployed to:", metrics.address);
+  console.log("CheddaDappStore deployed to:", dappStore.address);
+  console.log("DappMetrics deployed to:", dappMetrics.address);
+  await save()
+}
+
+
+async function save() {
+  const provider = new ethers.providers.JsonRpcProvider();
+  const network = await provider.getNetwork()
+  let config = `
+  {
+    "dappStore": "${dappStore.address}",
+    "dappMetrics": "${dappMetrics.address}"
+  }
+
+  `
+  console.log("network is: ", network)
+  let data = JSON.stringify(config)
+  fs.writeFileSync(`${network.name}.addresses.json`, JSON.parse(data))
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "hardhat/console.sol";
+
 struct Dapp {
     uint16 index;
     string name;
@@ -21,7 +23,7 @@ interface IStore {
         string memory network,
         uint8 chainId,
         address contractAddress,
-        bytes32 category,
+        string memory category,
         string calldata uri
     ) external;
 
@@ -49,7 +51,7 @@ contract CheddaDappStore is IStore {
     mapping(address => uint16) public ratings;
     mapping(address => mapping(address => bool)) private appAdmins;
     mapping(address => DappReview[]) public reviews;
-    mapping(bytes32 => address[]) public categories;
+    mapping(string => address[]) public categories;
 
     event DappAdded(string name, address contractAddress);
     event DappRemoved(string name, address contractAddress);
@@ -61,10 +63,11 @@ contract CheddaDappStore is IStore {
         string memory network,
         uint8 chainId,
         address contractAddress,
-        bytes32 category,
+        string memory category,
         string calldata uri
     ) public override {
         // require(dapp.contractAddress != address(0), "Address is zero");
+        // require(_dapps[contractAddress].contractAddress == address(0), "Dapp already exists");
         uint16 index = _dappCount++;
         Dapp memory dapp = Dapp({
             index: index,
@@ -188,7 +191,7 @@ contract CheddaDappStore is IStore {
         appAdmins[contractAddress][admin] = false;
     }
 
-    function getDappsInCategory(bytes32 category) public view returns (Dapp[] memory) {
+    function getDappsInCategory(string calldata category) public view returns (Dapp[] memory) {
         require(categories[category].length != 0, "Invalid category");
         address[] memory dappAddresses = categories[category];
         Dapp[] memory dappList = new Dapp[](dappAddresses.length);
@@ -198,7 +201,7 @@ contract CheddaDappStore is IStore {
         return dappList;
     }
 
-    function numberOfDappsInCategory(bytes32 category) public view returns (uint256) {
+    function numberOfDappsInCategory(string calldata category) public view returns (uint256) {
        return categories[category].length;
     }
 }
