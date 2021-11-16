@@ -7,8 +7,8 @@ const hre = require("hardhat");
 const ethers = require("ethers")
 const fs = require('fs');
 
-let dappStore
-let dappMetrics
+let market
+let explorer
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -19,16 +19,18 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const CheddaStore = await hre.ethers.getContractFactory("CheddaDappStore");
-  dappStore = await CheddaStore.deploy();
-  await dappStore.deployed();
+  const CheddaMarket = await hre.ethers.getContractFactory("CheddaMarket");
+  market = await CheddaMarket.deploy();
+  await market.deployed();
 
-  const DappMetrics = await hre.ethers.getContractFactory("DappMetrics");
-  dappMetrics = await DappMetrics.deploy(dappStore.address);
-  await dappMetrics.deployed();
+  const CheddaMarketExplorer = await hre.ethers.getContractFactory("CheddaMarketExplorer");
+  explorer = await CheddaMarketExplorer.deploy();
+  await explorer.deployed();
+  
+  await market.updateMarketExplorer(explorer.address);
 
-  console.log("CheddaDappStore deployed to:", dappStore.address);
-  console.log("DappMetrics deployed to:", dappMetrics.address);
+  console.log("CheddaMarket deployed to:", market.address);
+  console.log("CheddaMarketExplorer deployed to:", explorer.address);
   await save()
 }
 
@@ -38,14 +40,13 @@ async function save() {
   const network = await provider.getNetwork()
   let config = `
   {
-    "dappStore": "${dappStore.address}",
-    "dappMetrics": "${dappMetrics.address}"
+    "market": "${market.address}",
+    "explorer": "${explorer.address}"
   }
 
   `
-  console.log("network is: ", network)
   let data = JSON.stringify(config)
-  fs.writeFileSync(`${network.name}.addresses.json`, JSON.parse(data))
+  fs.writeFileSync(`${network.name}-market.addresses.json`, JSON.parse(data))
 }
 
 // We recommend this pattern to be able to use async/await everywhere

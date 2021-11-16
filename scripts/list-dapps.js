@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
 const dapplist = require("../dapps/dapplist.json")
-const addresses = require("../unknown.addresses.json")
+const addresses = require("../unknown-store.addresses.json")
 
 let dappStore
 
