@@ -4,13 +4,19 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC165.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./IMintPolicy.sol";
 
-contract CheddaNFT is ERC721Enumerable, Ownable {
-
+interface ICheddaNFT is IERC721 {
+    /**
+     * @dev Returns the URI containing the token metadata.
+     */
+    function metadataURI() external view returns (string memory);
+}
+contract CheddaNFT is ICheddaNFT, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter internal _tokenIds;
 
@@ -26,6 +32,8 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
     /// @notice Platform fee receipient
     address payable public feeReceipient;
 
+    string public override metadataURI;
+
     /// @dev Events of the contract
     event Minted(
         uint256 tokenId,
@@ -39,14 +47,25 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
         _;
     }
 
-    constructor(uint256 _mintFee, address payable _feeReceipient) ERC721("Chedda NFT", "CNFT") {
-      mintFee = _mintFee;
-      feeReceipient = _feeReceipient;
+    constructor(
+        uint256 _mintFee,
+        address payable _feeReceipient,
+        string memory _name,
+        string memory _symbol,
+        string memory _uri
+    ) ERC721(_name, _symbol) {
+        mintFee = _mintFee;
+        feeReceipient = _feeReceipient;
+        metadataURI = _uri;
     }
 
-    function setMintFee(uint256 newMintFee) public onlyOwner() {
-      mintFee = newMintFee;
+    function setMintFee(uint256 newMintFee) public onlyOwner {
+        mintFee = newMintFee;
     }
+
+    // function metadataURI() public view returns (string memory) {
+    //     return _metadataURI;
+    // }
 
     /**
      @notice Mints a NFT AND when minting to a contract checks if the beneficiary is a 721 compatible
@@ -54,7 +73,11 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
      @param tokenUri URI for the token being minted
      @return uint256 The token ID of the token that was minted
      */
-    function mint(address mintAddress, string calldata tokenUri) external payable returns (uint256) {
+    function mint(address mintAddress, string calldata tokenUri)
+        external
+        payable
+        returns (uint256)
+    {
         require(msg.value >= mintFee, "NFT: Insufficient mint fee");
         require(bytes(tokenUri).length > 0, "NFT: tokenUri is empty");
         require(mintAddress != address(0), "NFT: Addr");
@@ -65,11 +88,13 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
         // Mint token and set token URI
         _safeMint(mintAddress, tokenId);
         _setTokenURI(tokenId, tokenUri);
-        
-        feeReceipient.transfer(msg.value);
+
+        if (msg.value != 0) {
+            feeReceipient.transfer(msg.value);
+        }
 
         minters[tokenId] = msg.sender;
-        
+
         emit Minted(tokenId, mintAddress, tokenUri, _msgSender());
 
         return tokenId;
@@ -78,8 +103,14 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual override tokenIdExists(tokenId) returns (string memory) {
-
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        tokenIdExists(tokenId)
+        returns (string memory)
+    {
         string memory _tokenURI = _tokenURIs[tokenId];
         string memory base = _baseURI();
 
@@ -102,7 +133,11 @@ contract CheddaNFT is ERC721Enumerable, Ownable {
      *
      * - `tokenId` must exist.
      */
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual tokenIdExists(tokenId) {
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI)
+        internal
+        virtual
+        tokenIdExists(tokenId)
+    {
         _tokenURIs[tokenId] = _tokenURI;
     }
 

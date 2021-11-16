@@ -11,8 +11,11 @@ contract CheddaWhitelistedNFT is CheddaNFT {
     constructor(
         uint256 _mintFee,
         address payable _feeReceipient,
-        address[] memory whitelist
-    ) CheddaNFT(_mintFee, _feeReceipient) {
+        address[] memory whitelist,
+        string memory name,
+        string memory symbol,
+        string memory metadataURI
+    ) CheddaNFT(_mintFee, _feeReceipient, name, symbol, metadataURI) {
         _createWhitelist(whitelist);
     }
 

@@ -6,6 +6,20 @@ import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./CheddaAuction.sol";
+import "./CheddaMarketExplorer.sol";
+
+struct Listing {
+    address nftContract;
+    uint256 tokenId;
+    address payable seller;
+    uint256 price;
+}
+
+struct Sale {
+    address seller;
+    address buyer;
+    uint256 amountPaid;
+}
 
 contract CheddaMarket is Ownable, ReentrancyGuard {
 
@@ -13,20 +27,10 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
     /// Note: commission is set when the listing is created, not at time of purchase so that
     /// any changes in commissions do not impact already listed items
     /// @dev Explain to a developer any extra details
-    struct Listing {
-        address payable seller;
-        uint256 price;
-        uint256 commission;
-    }
 
-    struct Sale {
-        address seller;
-        address buyer;
-        uint256 amountPaid;
-        uint256 commissionPaid;
-    }
 
     bytes4 private constant INTERFACE_ID_ERC721 = 0x80ac58cd;
+    bytes4 private constant INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     bytes4 private constant INTERFACE_ID_ERC1155 = 0xd9b67a26;
 
     // NFT contract address => (Token ID => auction)
@@ -43,11 +47,15 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
     // NFT contract address => Token ID => Sale Price
     mapping(address => mapping(uint256 => uint256)) public offers;
 
+    Listing[] public allListings;
+
     /// @notice Market fee in basis points. 
     /// For a fee of 1%, platform fee would have a value of 100
     uint256 public marketFee;
 
     address payable public feeRecipient;
+
+    CheddaMarketExplorer public explorer;
 
     modifier onlyItemOwner(address nftContract, uint256 tokenId) {
         if (_isERC721(nftContract)) {
@@ -55,6 +63,10 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
             require(nft.ownerOf(tokenId) == msg.sender, "Market: Not item owner");
         }
         _;
+    }
+
+    function updateMarketExplorer(address explorerAddress) public {
+        explorer = CheddaMarketExplorer(explorerAddress);
     }
 
     function setMarketFee(uint256 newFee) public onlyOwner() {
@@ -72,8 +84,11 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
     ) external onlyItemOwner(nftContract, tokenId) {
         require(!_saleItemExists(nftContract, tokenId), "Market: Already listed");
         IERC721(nftContract).transferFrom(_msgSender(), address(this), tokenId);
-        listings[nftContract][tokenId] = Listing(payable(_msgSender()), price, 0);
+        Listing memory listing = Listing(nftContract, tokenId, payable(_msgSender()), price);
+        listings[nftContract][tokenId] = listing;
+        allListings.push(listing);
         tokenIdsForSale[nftContract].push(tokenId);
+        explorer.reportListing(nftContract, tokenId, price);
     }
 
     function buyItem(address nftContract, uint256 tokenId) external payable nonReentrant() {
@@ -90,8 +105,9 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         listing.seller.transfer(amountPaid);
         IERC721(nftContract).transferFrom(address(this), _msgSender(), tokenId);
         _delistItem(nftContract, tokenId);
-        Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice, amountPaid);
+        Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice);
         sales[nftContract][tokenId].push(newSale);
+        explorer.reportMarketSale(nftContract, tokenId);
     }
 
     function cancelSale(address nftContract, uint256 tokenId)
@@ -163,4 +179,11 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         return listings[nftContract][tokenId].seller != address(0);
     }
 
+    function getAllListings() public view returns (Listing[] memory) {
+        Listing[] memory toReturn = new Listing[](allListings.length);
+        for (uint256 i = 0; i < allListings.length; i++) {
+            toReturn[i] = allListings[i];
+        }
+        return toReturn;
+    }
 }

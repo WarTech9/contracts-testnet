@@ -7,6 +7,7 @@ require("solidity-coverage");
 
 const fs = require("fs");
 const privateKey = fs.readFileSync(".secret").toString().trim() || "01234567890123456789";
+const privateKey2 = fs.readFileSync(".secret2").toString().trim() || "01234567890123456789";
 const infuraId = fs.readFileSync(".infuraid").toString().trim() || "";
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -44,6 +45,8 @@ module.exports = {
       url: process.env.ROPSTEN_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      gas: 2100000,
+      gasPrice: 1000000000000,
     },
     harmonymain: {
       url: "https://api.harmony.one",
@@ -54,32 +57,33 @@ module.exports = {
     },
     harmonytest: {
       url: "https://api.s0.b.hmny.io",
-      accounts: [privateKey],
+      accounts: [privateKey, privateKey2],
       chainId: 1666700000,
       gas: 8500000,
       gasPrice: 1000000000000,
     },
     iotextest: {
       url: "https://babel-api.testnet.iotex.io",
-      accounts: [privateKey],
+      accounts: [privateKey, privateKey2],
       chainId: 4690,
       gas: 8500000,
       gasPrice: 1000000000000,
     },
     iotexmain: {
       url: "https://babel-api.mainnet.iotex.io",
-      accounts: [privateKey],
+      accounts: [privateKey, privateKey2],
       chainId: 4689,
       gas: 8500000,
       gasPrice: 1000000000000,
     },
-    mumbai: {
+    polygonmumbai: {
       // Infura
       // url: `https://polygon-mumbai.infura.io/v3/${infuraId}`,
       url: `https://polygon-mumbai.g.alchemy.com/v2/${infuraId}`,
-      accounts: [privateKey],
+      accounts: [privateKey, privateKey2],
       gasPrice: 8000000000,
-      timeout: 60000,
+      gas: 2100000,
+      timeout: 120000,
     },
     matic: {
       // Infura
@@ -87,6 +91,7 @@ module.exports = {
       url: "https://rpc-mainnet.maticvigil.com",
       accounts: [privateKey],
       gasPrice: 8000000000,
+      gas: 2100000,
       timeout: 60000,
     },
   },
