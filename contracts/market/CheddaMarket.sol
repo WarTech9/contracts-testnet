@@ -89,7 +89,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         listings[nftContract][tokenId] = listing;
         allListings.push(listing);
         tokenIdsForSale[nftContract].push(tokenId);
-        explorer.reportListing(nftContract, tokenId, price);
+        explorer.reportListing(nftContract, tokenId, price, _msgSender());
     }
 
     function buyItem(address nftContract, uint256 tokenId) external payable nonReentrant() {
@@ -105,17 +105,19 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         uint256 amountPaid = msg.value - fee;
         listing.seller.transfer(amountPaid);
         IERC721(nftContract).transferFrom(address(this), _msgSender(), tokenId);
-        _delistItem(nftContract, tokenId);
+
         Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice);
         sales[nftContract][tokenId].push(newSale);
-        explorer.reportMarketSale(nftContract, tokenId);
+        explorer.reportMarketSale(nftContract, tokenId, listing.seller, _msgSender());
+
+        _delistItem(nftContract, tokenId);
     }
 
     function cancelSale(address nftContract, uint256 tokenId)
         external
         onlyItemOwner(nftContract, tokenId)
     {
-        require(_saleItemExists(nftContract, tokenId), "Market: Not for sale");
+        require(_saleItemExists(nftContract, tokenId), "Market: Cancel item not listed");
         _delistItem(nftContract, tokenId);
     }
 
