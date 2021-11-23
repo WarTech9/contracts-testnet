@@ -8,13 +8,13 @@
       "tagline": "The Liquidity Protocol",
       "summary": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
       "description": "Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmSaUENg7t2tDQjDQYzfYiFyiVz77tWLh3FpvpKmKB8Q5Z",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/aave-logo.png",
       "homePageURI": "https://aave.com",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "B6509E",
       "secondaryColor": "2EBAC6",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmS6ii1G1tuK6DxCvoW1wr9LpTgc9JqNY5rEKfvvWcXui8",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/aave.json",
       "socials": [
         {
           "name": "twitter",
@@ -40,11 +40,11 @@
       "screenshots": [
         {
           "text": "Dashboard",
-          "imageURI": "https://gateway.pinata.cloud/ipfs/QmUujpzUsJ5k2sA9JDkXSGEqEuDz3x4JrrCTG1662VcAgH/Screen%20Shot%202021-10-25%20at%205.13.52%20PM.png"
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/aave-screen-1.png"
         },
         {
           "text": "Pool",
-          "imageURI": "https://gateway.pinata.cloud/ipfs/QmUujpzUsJ5k2sA9JDkXSGEqEuDz3x4JrrCTG1662VcAgH/Screen%20Shot%202021-10-25%20at%205.21.15%20PM.png"
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/aave-screen-2.png"
         }
       ],
       "category": "defi",
@@ -61,13 +61,13 @@
       "tagline": "",
       "summary": "Next-gen Layer 2 DEX. Trade at lightning-fast speeds with near-zero gas fees.",
       "description": "Next-gen Layer 2 DEX. Trade at lightning-fast speeds with near-zero gas fees.",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmU53AyqwtTXm7WvZmxLTtHMJ5h1bUv4Ss4oYvhhmtBSqR",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/quickswap-logo.png",
       "homePageURI": "https://quickswap.exchange",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "227af6",
       "secondaryColor": "",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmNSK2tBWVKKcLVMa4QT1J84UKTg8tFBojeeGrzBqufY8k",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/quickswap.json",
       "socials": [
         {
           "name": "twitter",
@@ -81,11 +81,11 @@
       "screenshots": [
         {
           "text": "swap",
-          "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.32.20%20PM.png"
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/quickswap-screen-1.png"
         },
         { 
             "text": "Pool",
-            "imageURI": "https://gateway.pinata.cloud/ipfs/QmQRqbmcjdKzyVuexjPPBLmQTrQ4dDxoP3sCcmn79kKGhY/Screen%20Shot%202021-10-25%20at%205.33.09%20PM.png"
+            "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/quickswap-screen-2.png"
         }
       ],
       "category": "defi",
@@ -102,13 +102,13 @@
       "tagline": "1inch Network - The DeFi / DEX Aggregator",
       "summary": "DeFi / DEX aggregator with the most liquidity and the best rates on Ethereum and Binance Smart Chain, 1inch dApp is an entry point to the 1inch Network’s tech.",
       "description": "DeFi / DEX aggregator with the most liquidity and the best rates on Ethereum and Binance Smart Chain, 1inch dApp is an entry point to the 1inch Network’s tech.",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmaiSBT1pLHvjfiiQ6o63J2habJF1N4coFmMJphxTurrar",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/1inch_logo_without_text.png",
       "homePageURI": "",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "0a121d",
       "secondaryColor": "",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmVigURAhhhBvyiK5o7wZYd4zCKk9VXXyEfWcG96ce4GEb",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/1inch.json",
       "socials": [
         {
           "name": "twitter",
@@ -120,6 +120,18 @@
         }
       ],
       "screenshots": [
+        {
+          "text": "Dashboard",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/1-inch-screen-1.png"
+        },
+        {
+          "text": "Dashboard",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/1-inch-screen-2.png" 
+        },
+        {
+          "text": "Dashboard",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/1-inch-screen-3.png"
+        }
       ],
       "category": "defi",
       "tags": [
@@ -135,13 +147,13 @@
       "tagline": "",
       "summary": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
       "description": "Balancer Protocol allows for automated portfolio management and providing liquidity turning the concept of an index fund on its head: instead of paying fees to portfolio managers, you collect fees from traders who rebalance your portfolio by following arbitrage opportunities",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmNgZB76BnHANNE2rgjaPu1w9qf2JkwbYrRp7QfSnYhgP5",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/balancer-logo.png",
       "homePageURI": "https://balancer.fi/",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "ffffff",
       "secondaryColor": "000000",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmTSqSiW6oyawuLnC7KLjsLagZtJsPYViLuAhgpPJY8Umt",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/balancer.json",
       "socials": [
         {
           "name": "twitter",
@@ -157,38 +169,18 @@
         }
       ],
       "screenshots": [
-      ],
-      "category": "defi",
-      "tags": [
-        "defi"
-      ]
-    },
-    {
-      "name": "DODO",
-      "contractAddress": "0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd",
-      "network": "Polygon",
-      "chainId": "137",
-      "tagline": "",
-      "summary": "",
-      "description": "Dododex a companion app for ARK: Survival Evolved. Using the Taming Calculator, you can estimate how long it’ll take to tame almost any dinosaur as well as the food and narcotics required for each.",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmcrSKUPS32gWQTzpUwXfc7xeXKXv1kSUe4mVpSgyTbcmK",
-      "homePageURI": "https://dodoex.io",
-      "bannerImageURI": "",
-      "backgroundImageURI": "",
-      "primaryColor": "fff90e",
-      "secondaryColor": "",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmWo8VfeM8vC4XtUD2P8k5otGmA9YbC9gB2BAydnWnXrZW",
-      "socials": [
         {
-          "name": "twitter",
-          "profileURI": "https://twitter.com/BreederDodo"
+          "text": "Landing Screen",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/balancer-screen-1.png"
         },
         {
-          "name": "reddit",
-          "profileURI": "https://reddit.com/r/DodoEx"
+          "text": "Trade",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/balancer-screen-2.png"
+        },
+        {
+          "text": "Invest",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/balancer-screen-3.png"
         }
-      ],
-      "screenshots": [
       ],
       "category": "defi",
       "tags": [
@@ -203,13 +195,13 @@
       "tagline": "Digital frens for the crypto generation",
       "summary": "Aavegotchi is a DeFi-focused non-fungible token (NFT) that runs on the Aave protocol. Simply put, Aavegotchis are game avatars that can be used as DeFi collateral to earn staking rewards",
       "description": "Aavegotchi is a DeFi-focused non-fungible token (NFT) that runs on the Aave protocol. Simply put, Aavegotchis are game avatars that can be used as DeFi collateral to earn staking rewards",
-      "logoURI": "https://gateway.pinata.cloud/ipfs/QmZfCiA3TUFxmt9ijUGv13MJJmgWrzBe6LP5LTGKPnsV2e",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/aavegotchi-logo.png",
       "homePageURI": "https://aavegotchi.com/",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "9800f7",
       "secondaryColor": "",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmS58FsYUFLsjh7Ah66Eh8Z7GGAY2c6HiEcK7M1sgPK7mp",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/aavegotchi.json",
       "socials": [
         {
           "name": "twitter",
@@ -217,6 +209,14 @@
         }
       ],
       "screenshots": [
+        {
+          "text": "Landing Screen",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/aavegotchi-screen-1.png"
+        },
+        {
+          "text": "Portals",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/aavegotchi-screen-2.png" 
+        }
       ],
       "category": "nft",
       "tags": [
@@ -232,13 +232,13 @@
       "tagline": "",
       "summary": "Create, explore and trade in the first-ever virtual world owned by its users.",
       "description": "Decentraland is a virtual game world run by its users. Every piece of land and every item in the virtual land is a non-fungible token. Some of them sell for thousands of dollars.",
-      "logoURI": "string",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/decentraland-logo.png",
       "homePageURI": "https://decentraland.org/",
       "bannerImageURI": "",
       "backgroundImageURI": "",
       "primaryColor": "",
       "secondaryColor": "",
-      "metadataURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=Qmcj3uuEJXpbnqA4UXfKW17e3GdNmvrL9cefyNFbF2Mrb2",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/decentraland.json",
       "socials": [
         {
           "name": "twitter",
@@ -258,12 +258,257 @@
         }
       ],
       "screenshots": [
+        {
+          "text": "Dragon City",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/decentraland-screen-1.png"  
+        },
+        {
+          "text": "Sky City",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/decentraland-screen-2.png"  
+        },
+        {
+          "text": "Backpack",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/decentraland-screen-3.png"  
+        },
+        {
+          "text": "Stage",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/decentraland-screen-4.png"  
+        },
+        {
+          "text": "Marketplace",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/decentraland-screen-5.png"  
+        }
       ],
       "category": "gaming",
       "tags": [
         "nft",
         "gaming",
         "dapp"
+      ]
+    },
+    {
+      "name": "Beefy Finance",
+      "contractAddress": "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+      "network": "Polygon",
+      "chainId": "137",
+      "tagline": "",
+      "summary": "The multi-chain yield optimizer",
+      "description": "The multi-chain yield optimizer",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/beefy-finance-logo.jpeg",
+      "homePageURI": "https://beefy.finance",
+      "bannerImageURI": "",
+      "backgroundImageURI": "",
+      "primaryColor": "fff90e",
+      "secondaryColor": "",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/beefy.json",
+      "socials": [
+        {
+          "name": "twitter",
+          "profileURI": "https://twitter.com/beefyfinance"
+        },
+        {
+          "name": "reddit",
+          "profileURI": "https://www.reddit.com/r/Beefy/"
+        },
+        {
+            "name": "telegram",
+            "profileURI": "https://t.me/beefyfinance"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "Exchange",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/beefy-finance-screen-1.png"
+        } 
+      ],
+      "category": "defi",
+      "tags": [
+        "defi"
+      ]
+    },
+    {
+      "name": "DODO",
+      "contractAddress": "0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd",
+      "network": "Polygon",
+      "chainId": "137",
+      "tagline": "",
+      "summary": "",
+      "description": "Dododex a companion app for ARK: Survival Evolved. Using the Taming Calculator, you can estimate how long it’ll take to tame almost any dinosaur as well as the food and narcotics required for each.",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/dodo-logo.png",
+      "homePageURI": "https://dodoex.io",
+      "bannerImageURI": "",
+      "backgroundImageURI": "",
+      "primaryColor": "fff90e",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/dodo.json",
+      "secondaryColor": "",
+      "socials": [
+        {
+          "name": "twitter",
+          "profileURI": "https://twitter.com/BreederDodo"
+        },
+        {
+          "name": "reddit",
+          "profileURI": "https://reddit.com/r/DodoEx"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "Exchange",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-1.png"
+        },
+        {
+          "text": "Earn",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-2.png"
+        },
+        {
+          "text": "All Pools",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-3.png"
+        },
+        {
+          "text": "Liquidity Pairs",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-4.png"
+        },
+        {
+          "text": "Dodo Dashboards",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-5.png"
+        },
+        {
+          "text": "NFTs",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-6.png"
+        }
+      ],
+      "category": "defi",
+      "tags": [
+        "defi"
+      ]
+    },
+    {
+      "name": "OpenSea",
+      "contractAddress": "0x208Eee43721D4718D7f7Fe740951C548ea659ed6",
+      "network": "Polygon",
+      "chainId": "137",
+      "tagline": "",
+      "summary": "",
+      "description": "The world’s largest digital marketplace for crypto collectibles and non-fungible tokens (NFTs), including ERC721 and ERC1155 assets. Buy, sell, and discover exclusive digital assets like Axies, ENS names, CryptoKitties, Decentraland, and more.",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/open-sea-logo.png",
+      "homePageURI": "https://opensea.io.io",
+      "bannerImageURI": "",
+      "backgroundImageURI": "",
+      "primaryColor": "fff90e",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/opensea.json",
+      "secondaryColor": "",
+      "socials": [
+        {
+          "name": "twitter",
+          "profileURI": "https://twitter.com/OpenSea"
+        },
+        {
+          "name": "reddit",
+          "profileURI": "https://reddit.com/r/OpenSea"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "Collections",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/opensea-screen-1.png"
+        },
+        {
+          "text": "NFT Page",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/opensea-screen-2.png"
+        },
+        {
+          "text": "Stats",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/opensea-screen-3.png"
+        }
+      ],
+      "category": "nft",
+      "tags": [
+        "nft"
+      ]
+    },
+    {
+      "name": "Neon District",
+      "contractAddress": "0x2D9105814c1839B1950ea4fa5642308f7E4259C2",
+      "network": "Polygon",
+      "chainId": "137",
+      "tagline": "",
+      "summary": "",
+      "description": "Neon District is the cyberpunk role-playing adventure and flagship game developed by Blockade Games.",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/neon-district.jpeg",
+      "homePageURI": "https://portal.neondistrict.io/",
+      "bannerImageURI": "",
+      "backgroundImageURI": "",
+      "primaryColor": "fff90e",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/neondistrict.json",
+      "secondaryColor": "",
+      "socials": [
+        {
+          "name": "twitter",
+          "profileURI": "https://twitter.com/NeonDistrict"
+        },
+        {
+          "name": "reddit",
+          "profileURI": "https://reddit.com/r/NeonDistrict"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "Welcome Screen",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/neon-district-screen-1.png"
+        },
+        {
+          "text": "Choose Character",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/neon-district-screen-2.png"
+        }
+      ],
+      "category": "gaming",
+      "tags": [
+        "gaming",
+        "nft"
+      ]
+    },
+    {
+      "name": "TERRA VIRTUA",
+      "contractAddress": "0xd084b83c305dafd76ae3e1b4e1f1fe2ecccb3988",
+      "network": "Polygon",
+      "chainId": "137",
+      "tagline": "",
+      "summary": "",
+      "description": "A truly immersive collectible platform across Mobile, AR and VR with unique social, gaming and creative experiences, enabled by blockchain.",
+      "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/tvk-logo.jpeg",
+      "homePageURI": "https://terravirtua.io/",
+      "bannerImageURI": "",
+      "backgroundImageURI": "",
+      "primaryColor": "fff90e",
+      "metadataURI": "https://s3.amazonaws.com/chedda.store/dapps/metadata/tvk.json",
+      "secondaryColor": "",
+      "socials": [
+        {
+          "name": "twitter",
+          "profileURI": "https://twitter.com/terra_virtua"
+        },
+        {
+          "name": "reddit",
+          "profileURI": "https://www.reddit.com/user/terravirtua"
+        }
+      ],
+      "screenshots": [
+        {
+          "text": "Collections",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+        },
+        {
+          "text": "NFT Page",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+        },
+        {
+          "text": "Stats",
+          "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+        }
+      ],
+      "category": "gaming",
+      "tags": [
+        "gaming"
       ]
     }
   ]

@@ -1,0 +1,43 @@
+{
+    "name": "Terra Virtua",
+    "contractAddress": "0xd084b83c305dafd76ae3e1b4e1f1fe2ecccb3988",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "",
+    "summary": "",
+    "description": "A truly immersive collectible platform across Mobile, AR and VR with unique social, gaming and creative experiences, enabled by blockchain.",
+    "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/tvk-logo.jpeg",
+    "homePageURI": "https://terravirtua.io/",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "fff90e",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/terra_virtua"
+      },
+      {
+        "name": "reddit",
+        "profileURI": "https://www.reddit.com/user/terravirtua"
+      }
+    ],
+    "screenshots": [
+      {
+        "text": "Collections",
+        "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+      },
+      {
+        "text": "NFT Page",
+        "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+      },
+      {
+        "text": "Stats",
+        "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/tvk-screen-1.png"
+      }
+    ],
+    "category": "gaming",
+    "tags": [
+      "gaming"
+    ]
+  }

@@ -1,31 +1,55 @@
 {
-    "name": "DODO",
-    "contractAddress": "0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd",
-    "network": "Polygon",
-    "chainId": "137",
-    "tagline": "",
-    "summary": "",
-    "description": "Dododex a companion app for ARK: Survival Evolved. Using the Taming Calculator, you can estimate how long it’ll take to tame almost any dinosaur as well as the food and narcotics required for each.",
-    "logoURI": "https://ipfs.infura.io:5001/api/v0/cat?arg=QmcrSKUPS32gWQTzpUwXfc7xeXKXv1kSUe4mVpSgyTbcmK",
-    "homePageURI": "https://dodoex.io",
-    "bannerImageURI": "",
-    "backgroundImageURI": "",
-    "primaryColor": "fff90e",
-    "secondaryColor": "",
-    "socials": [
-      {
-        "name": "twitter",
-        "profileURI": "https://twitter.com/BreederDodo"
-      },
-      {
-        "name": "reddit",
-        "profileURI": "https://reddit.com/r/DodoEx"
-      }
-    ],
-    "screenshots": [
-    ],
-    "category": "defi",
-    "tags": [
-      "defi"
-    ]
-  }
+  "name": "DODO",
+  "contractAddress": "0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd",
+  "network": "Polygon",
+  "chainId": "137",
+  "tagline": "",
+  "summary": "",
+  "description": "Dododex a companion app for ARK: Survival Evolved. Using the Taming Calculator, you can estimate how long it’ll take to tame almost any dinosaur as well as the food and narcotics required for each.",
+  "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/dodo-logo.png",
+  "homePageURI": "https://dodoex.io",
+  "bannerImageURI": "",
+  "backgroundImageURI": "",
+  "primaryColor": "fff90e",
+  "secondaryColor": "",
+  "socials": [
+    {
+      "name": "twitter",
+      "profileURI": "https://twitter.com/BreederDodo"
+    },
+    {
+      "name": "reddit",
+      "profileURI": "https://reddit.com/r/DodoEx"
+    }
+  ],
+  "screenshots": [
+    {
+      "text": "Exchange",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-1.png"
+    },
+    {
+      "text": "Earn",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-2.png"
+    },
+    {
+      "text": "All Pools",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-3.png"
+    },
+    {
+      "text": "Liquidity Pairs",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-4.png"
+    },
+    {
+      "text": "Dodo Dashboards",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-5.png"
+    },
+    {
+      "text": "NFTs",
+      "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/dodo-screen-6.png"
+    }
+  ],
+  "category": "defi",
+  "tags": [
+    "defi"
+  ]
+}

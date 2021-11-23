@@ -1,0 +1,40 @@
+{
+    "name": "Neon District",
+    "contractAddress": "0x2D9105814c1839B1950ea4fa5642308f7E4259C2",
+    "network": "Polygon",
+    "chainId": "137",
+    "tagline": "",
+    "summary": "",
+    "description": "Neon District is the cyberpunk role-playing adventure and flagship game developed by Blockade Games.",
+    "logoURI": "https://s3.amazonaws.com/chedda.store/dapps/logos/neon-district.jpeg",
+    "homePageURI": "https://portal.neondistrict.io/",
+    "bannerImageURI": "",
+    "backgroundImageURI": "",
+    "primaryColor": "fff90e",
+    "secondaryColor": "",
+    "socials": [
+      {
+        "name": "twitter",
+        "profileURI": "https://twitter.com/NeonDistrict"
+      },
+      {
+        "name": "reddit",
+        "profileURI": "https://reddit.com/r/NeonDistrict"
+      }
+    ],
+    "screenshots": [
+      {
+        "text": "Welcome Screen",
+        "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/neon-district-screen-1.png"
+      },
+      {
+        "text": "Choose Character",
+        "imageURI": "https://s3.amazonaws.com/chedda.store/dapps/screenshots/neon-district-screen-2.png"
+      }
+    ],
+    "category": "gaming",
+    "tags": [
+      "gaming",
+      "nft"
+    ]
+  }
