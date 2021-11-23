@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 import "../library/IterableMapping.sol";
 import "./CheddaMarket.sol";
 import "./CheddaNFT.sol";
+import "hardhat/console.sol";
 
 // market analytics
 contract CheddaMarketExplorer {
