@@ -52,70 +52,70 @@ beforeEach(async function () {
 });
 
 describe("CheddaMarket", function () {
-  // it("Can list item", async function () {
-  //     console.log('about to approve')
-  //   await nft.connect(tokenRecipient).approve(market.address, 1);
-  //   await nft.connect(tokenRecipient).approve(market.address, 2);
-  //   await nft.connect(tokenRecipient).approve(market.address, 3);
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft.address, 1, price);
+  it("Can list item", async function () {
+      console.log('about to approve')
+    await nft.connect(tokenRecipient).approve(market.address, 1);
+    await nft.connect(tokenRecipient).approve(market.address, 2);
+    await nft.connect(tokenRecipient).approve(market.address, 3);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft.address, 1, price);
 
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft.address, 2, price);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft.address, 2, price);
 
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft.address, 3, price);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft.address, 3, price);
 
-  //   await nft2.connect(tokenRecipient).approve(market.address, 1);
-  //   await nft2.connect(tokenRecipient).approve(market.address, 2);
-  //   await nft2.connect(tokenRecipient).approve(market.address, 3);
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft2.address, 1, price);
+    await nft2.connect(tokenRecipient).approve(market.address, 1);
+    await nft2.connect(tokenRecipient).approve(market.address, 2);
+    await nft2.connect(tokenRecipient).approve(market.address, 3);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft2.address, 1, price);
 
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft2.address, 2, price);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft2.address, 2, price);
 
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft2.address, 3, price);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft2.address, 3, price);
 
-  //   const itemsForSale = await market.itemsForSale(nft.address);
-  //   console.log("itemsForSale = ", itemsForSale);
-  //   let collections = await explorer.getCollections()
-  //   console.log("Collections = ", collections)
+    const itemsForSale = await market.itemsForSale(nft.address);
+    console.log("itemsForSale = ", itemsForSale);
+    let collections = await explorer.getCollections()
+    console.log("Collections = ", collections)
 
-  //   let allItems = await explorer.getAllItems();
-  //   console.log('allItems = ', allItems)
-  //   // expect(itemsForSale.length).to.equal(1);
-  // });
+    let allItems = await explorer.getAllItems();
+    console.log('allItems = ', allItems)
+    // expect(itemsForSale.length).to.equal(1);
+  });
 
-  // it("Can buy item", async function () {
-  //   await nft.connect(tokenRecipient).approve(market.address, tokenId);
-  //   expect(await nft.ownerOf(tokenId)).to.equal(tokenRecipient.address);
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft.address, tokenId, price);
+  it("Can buy item", async function () {
+    await nft.connect(tokenRecipient).approve(market.address, tokenId);
+    expect(await nft.ownerOf(tokenId)).to.equal(tokenRecipient.address);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft.address, tokenId, price);
 
-  //   await market.buyItem(nft.address, tokenId, { value: price});
-  //   expect(await nft.ownerOf(tokenId)).to.equal(feeRecipient.address);
-  // });
+    await market.buyItem(nft.address, tokenId, { value: price});
+    expect(await nft.ownerOf(tokenId)).to.equal(feeRecipient.address);
+  });
 
-  // it("Can get a market item", async function () {
-  //   await nft.connect(tokenRecipient).approve(market.address, 1);
-  //   await market
-  //     .connect(tokenRecipient)
-  //     .listItemForSale(nft.address, 1, price);
-  //   let marketItem = await explorer.getMarketItem(nft.address, tokenId);
+  it("Can get a market item", async function () {
+    await nft.connect(tokenRecipient).approve(market.address, 1);
+    await market
+      .connect(tokenRecipient)
+      .listItemForSale(nft.address, 1, price);
+    let marketItem = await explorer.getMarketItem(nft.address, tokenId);
     
-  //   expect(marketItem).to.not.be.null
-  //   expect(marketItem.nftContract).to.equal(nft.address)
-  //   console.log('market item = ', marketItem)
-  // })
+    expect(marketItem).to.not.be.null
+    expect(marketItem.nftContract).to.equal(nft.address)
+    console.log('market item = ', marketItem)
+  })
 
   it("Can get a users owned items", async function() {
     await nft.connect(tokenRecipient).approve(market.address, 1);
