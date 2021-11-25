@@ -41,7 +41,7 @@ async function save() {
   let config = `
   {
     "market": "${market.address}",
-    "explorer": "${explorer.address}"
+    "marketExplorer": "${explorer.address}"
   }
 
   `

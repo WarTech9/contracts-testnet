@@ -8,7 +8,7 @@ const ethers = require("ethers")
 const fs = require('fs');
 
 let dappStore
-let dappMetrics
+let explorer
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -23,12 +23,12 @@ async function main() {
   dappStore = await CheddaStore.deploy();
   await dappStore.deployed();
 
-  const DappMetrics = await hre.ethers.getContractFactory("DappMetrics");
-  dappMetrics = await DappMetrics.deploy(dappStore.address);
-  await dappMetrics.deployed();
+  const CheddaDappExplorer = await hre.ethers.getContractFactory("CheddaDappExplorer");
+  explorer = await CheddaDappExplorer.deploy(dappStore.address);
+  await explorer.deployed();
 
   console.log("CheddaDappStore deployed to:", dappStore.address);
-  console.log("DappMetrics deployed to:", dappMetrics.address);
+  console.log("CheddaDappExplorer deployed to:", explorer.address);
   await save()
 }
 
@@ -39,13 +39,15 @@ async function save() {
   let config = `
   {
     "dappStore": "${dappStore.address}",
-    "dappMetrics": "${dappMetrics.address}"
+    "dappStoreExplorer": "${explorer.address}"
   }
 
   `
   console.log("network is: ", network)
   let data = JSON.stringify(config)
-  fs.writeFileSync(`${network.name}-store.addresses.json`, JSON.parse(data))
+  let filename = `${network.name}-store.addresses.json`
+  fs.writeFileSync(filename, JSON.parse(data))
+  console.log(`Addresses written to file: ${filename}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

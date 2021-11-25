@@ -11,7 +11,7 @@ struct Review {
     address author;
 }
 
-contract DappMetrics {
+contract CheddaDappExplorer {
     IStore private _dappStore;
 
     // Dapp address => rating

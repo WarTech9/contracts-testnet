@@ -22,13 +22,13 @@ beforeEach(async function () {
   store = await CheddaDappStore.deploy();
   await store.deployed();
 
-  const DappMetrics = await ethers.getContractFactory("DappMetrics");
-  metrics = await DappMetrics.deploy(store.address);
+  const CheddaDappExplorer = await ethers.getContractFactory("CheddaDappExplorer");
+  metrics = await CheddaDappExplorer.deploy(store.address);
   await metrics.deployed();
 });
 
 
-describe("DappMetrics", function () {
+describe("CheddaDappExplorer", function () {
   it("Can rate dapp", async function () {
     await store.addDapp(
       dappName,

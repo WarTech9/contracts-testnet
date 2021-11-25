@@ -25,7 +25,7 @@ contract CheddaRewards is Context, Ownable {
     uint256 constant public POINTS_PER_VOTE = 50;
 
     modifier onlyExplorer() {
-        require(_msgSender() == registry.dappstoreExplorer() || _msgSender() == registry.marketExplorer(),
+        require(_msgSender() == registry.dappStoreExplorer() || _msgSender() == registry.marketExplorer(),
         "Not allowed: Only Explorer");
         _;
     }
