@@ -12,7 +12,8 @@ let tokenId = 1;
 
 const mintFee = ethers.utils.parseUnits("0.1", "ether");
 const price = ethers.utils.parseUnits("2.5", "ether");
-const tokenURI = "https://ipfs/myHash";
+const tokenURI = "https://ipfs/token/myHash";
+const metadataURI = "https://ipfs/token/myHash";
 
 beforeEach(async function () {
   const signers = await ethers.getSigners();
@@ -22,10 +23,10 @@ beforeEach(async function () {
   await market.deployed();
 
   CheddaNFT = await ethers.getContractFactory("CheddaNFT");
-  nft = await CheddaNFT.deploy(mintFee, feeRecipient.address);
+  nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI);
   await nft.deployed();
 
-  await nft.mint(tokenRecipient.address, tokenURI, { value: mintFee });
+  tokenId = await nft.mint(tokenRecipient.address, tokenURI, { value: mintFee });
   console.log("tokenId = ", tokenId);
 });
 

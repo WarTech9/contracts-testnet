@@ -12,6 +12,9 @@ const dappAddress = "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec";
 const dappUri = "https://app.myawesomedapp.com"
 const dappCategory = "defi"
 
+const defi = "DeFi"
+const nft = "NFT"
+
 beforeEach(async function () {
   CheddaDappStore = await ethers.getContractFactory("CheddaDappStore");
   dappStore = await CheddaDappStore.deploy();
@@ -115,9 +118,6 @@ describe("CheddaDappStore", function () {
 
 
   it("Can categorize dapps", async function() {
-    const defi = "DeFi"
-    const nft = "NFT"
-    
     await dappStore.addDapp(
       "UniSwap",
       dappNetwork,
@@ -151,6 +151,22 @@ describe("CheddaDappStore", function () {
     expect(numberInNFT).to.equal(1)
 
     const defiDapps = await dappStore.getDappsInCategory(defi)
+    console.log('defi dapps are: ', defiDapps)
     expect(defiDapps.length).to.equal(2)
   });
+
+  it("Can get all dapps", async function() {
+    await dappStore.addDapp(
+      "UniSwap",
+      dappNetwork,
+      dappChainId,
+      "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
+      defi,
+      dappUri
+    );
+
+    let dapps = await dappStore.dapps()
+    console.log('all dapps are: ', dapps)
+    expect(dapps.length).to.greaterThan(0)
+  })
 });
