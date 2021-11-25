@@ -7,27 +7,42 @@ contract CheddaAddressRegistry is Ownable {
 
     address public dappstore;
     address public market;
+    address public dappstoreExplorer;
+    address public marketExplorer;
     address public govenor;
     address public mintPolicy;
     address public entropy;
+    address public rewards;
 
-    function setDappstore(address _storeAddress) public onlyOwner() {
-        dappstore = _storeAddress;
+    function setDappstore(address storeAddress) external onlyOwner() {
+        dappstore = storeAddress;
     }
 
-    function setMarket(address _marketAddress) external onlyOwner() {
-        market = _marketAddress;
+    function setMarket(address marketAddress) external onlyOwner() {
+        market = marketAddress;
     }
 
-    function setGovenor(address _govenorAddress) external onlyOwner() {
-        govenor = _govenorAddress;
+    function setDappstoreExplorer(address dappstoreExplorerAddress) external onlyOwner() {
+        dappstoreExplorer = dappstoreExplorerAddress;
     }
 
-    function setMintPolicy(address _mintPolicy) external onlyOwner() {
-        mintPolicy = _mintPolicy;
+    function setMarketExplorer(address marketExplorerAddress) external onlyOwner() {
+        marketExplorer = marketExplorerAddress;
     }
 
-    function setEntropy(address _entropy) external onlyOwner() {
-        entropy = _entropy;
+    function setGovenor(address govenorAddress) external onlyOwner() {
+        govenor = govenorAddress;
+    }
+
+    function setMintPolicy(address mintPolicyAddress) external onlyOwner() {
+        mintPolicy = mintPolicyAddress;
+    }
+
+    function setEntropy(address entropyAddress) external onlyOwner() {
+        entropy = entropyAddress;
+    }
+
+    function setRewards(address rewardsAddress) external onlyOwner() {
+        rewards = rewardsAddress;
     }
 }

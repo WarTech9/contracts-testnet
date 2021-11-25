@@ -2,7 +2,7 @@
   "extends": "solhint:recommended",
   "rules": {
     "compiler-version": ["error", "^0.8.0"],
-    "max-line-length": 120,
+    "max-line-length": 100,
     "func-visibility": ["warn", { "ignoreConstructors": true }]
   }
 }
