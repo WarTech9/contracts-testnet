@@ -4,16 +4,6 @@ const { ethers } = require("hardhat");
 
 let CheddaAddressRegistry;
 let registry;
-let CheddaNFT;
-let nft;
-let feeRecipient;
-let tokenRecipient;
-let tokenId = 1;
-
-const mintFee = ethers.utils.parseUnits("0.1", "ether");
-const price = ethers.utils.parseUnits("2.5", "ether");
-const tokenURI = "https://ipfs/token/myHash";
-const metadataURI = "https://ipfs/token/myHash";
 
 beforeEach(async function () {
     const signers = await ethers.getSigners();

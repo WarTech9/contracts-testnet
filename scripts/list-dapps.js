@@ -27,7 +27,7 @@ async function readDappList() {
     let polygonDapps = dapplist.polygon
     for (const dapp of polygonDapps) {
         console.log("Dapp => ", dapp)
-        let result = await dappStore.addDapp(
+        let tx = await dappStore.addDapp(
             dapp.name,
             dapp.network,
             dapp.chainId,
@@ -35,9 +35,10 @@ async function readDappList() {
             dapp.category,
             dapp.metadataURI
             )
-        console.log('dapp added with result: ', result)
+        console.log('dapp added with result: ', tx)
+        await tx.wait()
+        console.log('tx mined: ', tx)
     }
-    console.log('dapps added:')
     let dapps = await dappStore.dapps()
     console.log('dapps are: ', dapps)
 }

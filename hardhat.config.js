@@ -40,6 +40,7 @@ module.exports = {
       ],
       gas: 8500000,
       gasPrice: 1000000000000,
+      blockGasLimit: 124500000,
     },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
