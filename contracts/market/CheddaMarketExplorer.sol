@@ -10,6 +10,8 @@ import "hardhat/console.sol";
 
 // market explorer
 contract CheddaMarketExplorer {
+
+
     struct Trade {
         address nftContract;
         uint256 tokenId;

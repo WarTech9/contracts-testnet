@@ -53,8 +53,8 @@ contract CheddaDappStore is IStore {
     mapping(address => DappReview[]) public reviews;
     mapping(string => address[]) public categories;
 
-    event DappAdded(string name, address contractAddress);
-    event DappRemoved(string name, address contractAddress);
+    event DappAdded(string indexed name, address indexed contractAddress);
+    event DappRemoved(string indexed name, address indexed contractAddress);
 
     error DappNotFound();
 

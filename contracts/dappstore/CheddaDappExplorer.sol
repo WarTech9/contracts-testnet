@@ -16,6 +16,9 @@ struct Review {
 }
 
 contract CheddaDappExplorer is Context, Ownable {
+    event ReviewAdded(address indexed contractAddress, address indexed user);
+    event RatingAdded(address indexed contractAddress, address indexed user, uint256 rating);
+
     IStore private _dappStore;
     CheddaAddressRegistry public registry;
 
@@ -70,6 +73,7 @@ contract CheddaDappExplorer is Context, Ownable {
         );
         this.addRating(contractAddress, rating);
         reviews[contractAddress].push(review);
+        emit ReviewAdded(contractAddress, _msgSender());
     }
 
     function getReviews(address contractAddress)
@@ -115,6 +119,7 @@ contract CheddaDappExplorer is Context, Ownable {
 
         ICheddaRewards rewards = ICheddaRewards(registry.rewards());
         rewards.issueRewards(Actions.Rate, _msgSender());
+        emit RatingAdded(contractAddress, _msgSender(), rating);
     }
 
     function averageRating(address contractAddress)

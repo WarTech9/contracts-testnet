@@ -24,6 +24,11 @@ struct Sale {
 
 contract CheddaMarket is Ownable, ReentrancyGuard {
 
+    event ItemListed(address indexed nftContract, uint256 indexed itemId, uint256 price);
+    event ItemSold(address indexed nftContract, uint256 indexed itemId, uint256 price);
+
+    event MarketFeeUpdated(uint256 marketFee, address indexed updatedBy);
+
     /// @notice Market item listing.
     /// Note: commission is set when the listing is created, not at time of purchase so that
     /// any changes in commissions do not impact already listed items
@@ -72,6 +77,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
 
     function setMarketFee(uint256 newFee) public onlyOwner() {
         marketFee = newFee;
+        emit MarketFeeUpdated(marketFee, _msgSender());
     }
 
     function setfeeRecipient(address payable newAddress) public onlyOwner() {
@@ -90,6 +96,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         allListings.push(listing);
         tokenIdsForSale[nftContract].push(tokenId);
         explorer.reportListing(nftContract, tokenId, price, _msgSender());
+        emit ItemListed(nftContract, tokenId, price);
     }
 
     function buyItem(address nftContract, uint256 tokenId) external payable nonReentrant() {
@@ -111,6 +118,8 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         explorer.reportMarketSale(nftContract, tokenId, listing.seller, _msgSender());
 
         _delistItem(nftContract, tokenId);
+
+        emit ItemSold(nftContract, tokenId, itemPrice);
     }
 
     function cancelSale(address nftContract, uint256 tokenId)

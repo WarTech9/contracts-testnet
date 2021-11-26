@@ -70,10 +70,10 @@ contract CheddaRewards is Context, Ownable, ICheddaRewards {
         override
     {
         require(user != address(0), "Address can not be 0");
-        uint256 _amount = pointsPerAction[action];
-        require(_amount != 0, "Amount can not be 0");
-        CheddaXP(registry.cheddaXP()).mint(_amount, user);
+        uint256 amount = pointsPerAction[action];
+        require(amount != 0, "Amount can not be 0");
+        CheddaXP(registry.cheddaXP()).mint(amount, user);
 
-        emit RewardIssued(action, _amount, user);
+        emit RewardIssued(action, amount, user);
     }
 }
