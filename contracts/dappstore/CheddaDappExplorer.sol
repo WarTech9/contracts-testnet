@@ -1,7 +1,11 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CheddaDappStore.sol";
+import "../chedda/CheddaRewards.sol";
+import "hardhat/console.sol";
 
 struct Review {
     address contractAddress;
@@ -11,8 +15,9 @@ struct Review {
     address author;
 }
 
-contract CheddaDappExplorer {
+contract CheddaDappExplorer is Context, Ownable {
     IStore private _dappStore;
+    CheddaAddressRegistry public registry;
 
     // Dapp address => rating
     mapping(address => uint256) public ratings;
@@ -44,6 +49,12 @@ contract CheddaDappExplorer {
             "Dapp does not exist"
         );
         _;
+    }
+
+
+    function updateRegistry(address registryAddress) external onlyOwner() {
+        registry = CheddaAddressRegistry(registryAddress);
+        console.log("updating registry to %s", registryAddress);
     }
 
     function addReview(address contractAddress, string memory reviewDataURI, uint256 rating)
@@ -101,6 +112,9 @@ contract CheddaDappExplorer {
         userRatings[contractAddress][msg.sender] = rating;
         ratings[contractAddress] += rating;
         numberOfRatings[contractAddress] += 1;
+
+        ICheddaRewards rewards = ICheddaRewards(registry.rewards());
+        rewards.issueRewards(Actions.Rate, _msgSender());
     }
 
     function averageRating(address contractAddress)

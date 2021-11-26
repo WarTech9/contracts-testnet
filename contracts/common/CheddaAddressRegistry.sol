@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CheddaAddressRegistry is Ownable {
 
+    address public cheddaXP;
     address public dappStore;
     address public market;
     address public dappStoreExplorer;
@@ -13,6 +14,10 @@ contract CheddaAddressRegistry is Ownable {
     address public mintPolicy;
     address public entropy;
     address public rewards;
+
+    function setCheddaXP(address xp) external onlyOwner() {
+        cheddaXP = xp;
+    }
 
     function setDappStore(address storeAddress) external onlyOwner() {
         dappStore = storeAddress;

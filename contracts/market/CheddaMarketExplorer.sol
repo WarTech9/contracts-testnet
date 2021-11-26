@@ -8,7 +8,7 @@ import "./CheddaMarket.sol";
 import "./CheddaNFT.sol";
 import "hardhat/console.sol";
 
-// market analytics
+// market explorer
 contract CheddaMarketExplorer {
     struct Trade {
         address nftContract;
