@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 import "./CheddaAuction.sol";
 import "./CheddaMarketExplorer.sol";
+import "../common/CheddaAddressRegistry.sol";
 
 struct Listing {
     address nftContract;
@@ -61,7 +62,8 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
 
     address payable public feeRecipient;
 
-    CheddaMarketExplorer public explorer;
+
+    CheddaAddressRegistry public registry;
 
     modifier onlyItemOwner(address nftContract, uint256 tokenId) {
         if (_isERC721(nftContract)) {
@@ -71,8 +73,8 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         _;
     }
 
-    function updateMarketExplorer(address explorerAddress) public {
-        explorer = CheddaMarketExplorer(explorerAddress);
+    function updateRegistry(address registryAddress) public onlyOwner() {
+        registry = CheddaAddressRegistry(registryAddress);
     }
 
     function setMarketFee(uint256 newFee) public onlyOwner() {
@@ -95,7 +97,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         listings[nftContract][tokenId] = listing;
         allListings.push(listing);
         tokenIdsForSale[nftContract].push(tokenId);
-        explorer.reportListing(nftContract, tokenId, price, _msgSender());
+        CheddaMarketExplorer(registry.marketExplorer()).reportListing(nftContract, tokenId, price, _msgSender());
         emit ItemListed(nftContract, tokenId, price);
     }
 
@@ -115,7 +117,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
 
         Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice);
         sales[nftContract][tokenId].push(newSale);
-        explorer.reportMarketSale(nftContract, tokenId, listing.seller, _msgSender());
+        CheddaMarketExplorer(registry.marketExplorer()).reportMarketSale(nftContract, tokenId, listing.seller, _msgSender());
 
         _delistItem(nftContract, tokenId);
 

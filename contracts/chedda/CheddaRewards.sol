@@ -23,7 +23,6 @@ contract CheddaRewards is Context, Ownable, ICheddaRewards {
 
     event RewardIssued(Actions indexed a, uint256 indexed amount, address indexed user);
 
-    CheddaXP public xp;
     CheddaAddressRegistry public registry;
 
     mapping(Actions => uint256) public pointsPerAction;
@@ -43,9 +42,7 @@ contract CheddaRewards is Context, Ownable, ICheddaRewards {
         _;
     }
 
-    constructor(address cheddaAddress) {
-        xp = CheddaXP(cheddaAddress);
-
+    constructor() {
         setRewards(Actions.Like, POINTS_PER_LIKE);
         setRewards(Actions.Rate, POINTS_PER_RATE);
         setRewards(Actions.Review, POINTS_PER_REVIEW);
@@ -54,10 +51,6 @@ contract CheddaRewards is Context, Ownable, ICheddaRewards {
 
     function updateRegistry(address registryAddress) external onlyOwner {
         registry = CheddaAddressRegistry(registryAddress);
-    }
-
-    function updateCheddaXP(address xpAddress) external onlyOwner {
-        xp = CheddaXP(xpAddress);
     }
 
     function setRewards(Actions action, uint256 points) public onlyOwner {

@@ -9,6 +9,7 @@ let nft;
 let nft2;
 let CheddaMarketExplorer;
 let explorer;
+let registry
 let feeRecipient;
 let tokenRecipient;
 let tokenId = 1;
@@ -23,23 +24,27 @@ const metadataURI2 = "https://ipfs/second/myHash";
 beforeEach(async function () {
   const signers = await ethers.getSigners();
   [feeRecipient, tokenRecipient] = [signers[0], signers[1]];
+
+  CheddaAddressRegistry = await ethers.getContractFactory("CheddaAddressRegistry");
+  registry = await CheddaAddressRegistry.deploy();
+
   CheddaMarket = await ethers.getContractFactory("CheddaMarket");
   market = await CheddaMarket.deploy();
-  await market.deployed();
+  await market.updateRegistry(registry.address)
 
   console.log('before deploy')
   CheddaNFT = await ethers.getContractFactory("CheddaNFT");
   nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI);
-  await nft.deployed();
 
   nft2 = await CheddaNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI2);
-  await nft2.deployed();
 
   CheddaMarketExplorer = await ethers.getContractFactory("CheddaMarketExplorer");
   explorer = await CheddaMarketExplorer.deploy();
-  await explorer.deployed();
 
-  await market.updateMarketExplorer(explorer.address);
+  // await market.updateMarketExplorer(explorer.address);
+
+  await registry.setMarket(market.address)
+  await registry.setMarketExplorer(explorer.address)
 
   console.log('before mint')
   await nft.mint(tokenRecipient.address, tokenURI + '1', { value: mintFee });

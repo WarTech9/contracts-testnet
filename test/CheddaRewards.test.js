@@ -13,19 +13,19 @@ beforeEach(async function () {
     const signers = await ethers.getSigners();
     [feeRecipient, tokenRecipient] = [signers[0], signers[1]];
 
-    const CheddaXP = await ethers.getContractFactory("CheddaXP");
-    xp = await CheddaXP.deploy();
-
     CheddaAddressRegistry = await ethers.getContractFactory("CheddaAddressRegistry");
     registry = await CheddaAddressRegistry.deploy();
-    await registry.setCheddaXP(xp.address)
+
+    const CheddaXP = await ethers.getContractFactory("CheddaXP");
+    xp = await CheddaXP.deploy();
+    await xp.updateRegistry(registry.address)
 
     CheddaRewards = await ethers.getContractFactory("CheddaRewards");
-    rewards = await CheddaRewards.deploy(xp.address);
-    registry.setRewards(rewards.address)
-
+    rewards = await CheddaRewards.deploy();
     await rewards.updateRegistry(registry.address)
-    await xp.updateRegistry(registry.address)
+
+    await registry.setRewards(rewards.address)
+    await registry.setCheddaXP(xp.address)
 
     console.log(`CheddaXP Deployed to ${xp.address}, rewards: ${rewards.address}`)
 });

@@ -4,6 +4,8 @@ const { ethers } = require("hardhat");
 
 let CheddaMarket;
 let market;
+let explorer;
+let registry
 let CheddaNFT;
 let nft;
 let feeRecipient;
@@ -25,6 +27,10 @@ beforeEach(async function () {
   CheddaNFT = await ethers.getContractFactory("CheddaNFT");
   nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI);
   await nft.deployed();
+
+  CheddaMarketExplorer = await ethers.getContractFactory("CheddaMarketExplorer");
+  explorer = await CheddaMarketExplorer.deploy();
+  await explorer.deployed();
 
   tokenId = await nft.mint(tokenRecipient.address, tokenURI, { value: mintFee });
   console.log("tokenId = ", tokenId);
