@@ -1,5 +1,6 @@
 // const { expect } = require("chai");
 const { expect } = require("chai");
+const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
 
 let signer0, signer1;
@@ -30,7 +31,7 @@ beforeEach(async function () {
   await xp.updateRegistry(registry.address)
 
   const CheddaRewards = await ethers.getContractFactory("CheddaRewards");
-  rewards = await CheddaRewards.deploy(xp.address);
+  rewards = await CheddaRewards.deploy();
   await rewards.updateRegistry(registry.address)
 
   console.log(`CheddaXP Deployed to ${xp.address}, rewards: ${rewards.address}`)
@@ -40,7 +41,7 @@ beforeEach(async function () {
   await store.deployed();
 
   const CheddaDappExplorer = await ethers.getContractFactory("CheddaDappExplorer");
-  explorer = await CheddaDappExplorer.deploy(store.address);
+  explorer = await CheddaDappExplorer.deploy();
   await explorer.updateRegistry(registry.address)
 
   await registry.setDappStore(store.address)
@@ -103,8 +104,10 @@ describe("CheddaDappExplorer", function () {
         console.log('rewardsForAction = ', rewardsForAction)
         let balance = await xp.balanceOf(recipient)
         let totalSupply = await xp.totalSupply()
+        let numberOfRatings = await explorer.numberOfRatings(dappAddress)
 
         expect(balance.toString()).to.equal(rewardsForAction.toString())
+        expect(numberOfRatings).to.equal(BigNumber.from(0))
 
         console.log('balance is ', balance)
         console.log('totalSupply is ', totalSupply)
@@ -118,11 +121,24 @@ describe("CheddaDappExplorer", function () {
           dappUri
         );
 
+        balance = await xp.balanceOf(signer1.address)
+        expect(balance).to.equal(BigNumber.from(0))
+
         await explorer.connect(signer1).addRating(dappAddress, 500);
+        numberOfRatings = await explorer.numberOfRatings(dappAddress)
         averageRating = await explorer.averageRating(dappAddress);
         expect(averageRating).to.equal(500);
+        expect(numberOfRatings).to.equal(BigNumber.from(1))
+
+        await explorer.addRating(dappAddress, 100)
+        numberOfRatings = await explorer.numberOfRatings(dappAddress)
+        averageRating = await explorer.averageRating(dappAddress);
+        expect(averageRating).to.equal(300);
+        expect(numberOfRatings).to.equal(BigNumber.from(2))
 
         balance = await xp.balanceOf(signer1.address)
+        expect(balance).to.not.equal(BigNumber.from(0))
         console.log('balance after rating = ', balance)
+        console.log('number of ratings = ', numberOfRatings)
   });
 });

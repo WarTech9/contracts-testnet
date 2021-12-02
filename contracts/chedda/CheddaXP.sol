@@ -8,6 +8,7 @@ import "../common/CheddaAddressRegistry.sol";
 contract CheddaXP is Context, Ownable {
     event Minted(uint256 amount, address to);
     event Burned(uint256 amount, address from);
+    event Slashed(uint256 amount, address owner);
 
     string public name;
     string public symbol;
@@ -28,6 +29,19 @@ contract CheddaXP is Context, Ownable {
 
     function mint(uint256 amount, address owner) public onlyRewards() {
         _mint(amount, owner);
+    }
+
+    function slash(uint256 amount, address owner) public onlyRewards() {
+        uint256 balance = balanceOf(owner);
+        uint256 amountToBurn = amount;
+        if (amountToBurn > balance) {
+            amountToBurn = balance;
+        }
+        require(balance - amountToBurn >= 0, "Balance: Invalid amount");
+        require(totalSupply - amountToBurn >= 0, "Total Supply: Invalid amount");
+        totalSupply -= amountToBurn;
+        balances[owner] -= amountToBurn;
+        emit Slashed(amount, owner);
     }
 
     function burn(uint256 amount) public {

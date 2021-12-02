@@ -19,11 +19,15 @@ contract CheddaDappExplorer is Context, Ownable {
     event ReviewAdded(address indexed contractAddress, address indexed user);
     event RatingAdded(address indexed contractAddress, address indexed user, uint256 rating);
 
-    IStore private _dappStore;
     CheddaAddressRegistry public registry;
 
     // Dapp address => rating
     mapping(address => uint256) public ratings;
+
+    /*
+    Dapp contract address => number of ratings dapp has received.
+     */
+    mapping(address => uint256) public numberOfRatings;
 
     // dapp address => User address => rating
     mapping(address => mapping(address => uint256)) public userRatings;
@@ -34,21 +38,12 @@ contract CheddaDappExplorer is Context, Ownable {
     // dapp address => (user address => index in `reviews` array)
     mapping(address => mapping(address => uint256)) public myReviews;
 
-    /*
-    Dapp contract address => number of ratings dapp has received.
-     */
-    mapping(address => uint256) public numberOfRatings;
-
     uint16 public constant RATING_SCALE = 100;
     uint16 public constant MAX_RATING = 500;
 
-    constructor(IStore store) {
-        _dappStore = store;
-    }
-
     modifier dappExists(address contractAddress) {
         require(
-            _dappStore.getDapp(contractAddress).contractAddress != address(0),
+            CheddaDappStore(registry.dappStore()).getDapp(contractAddress).contractAddress != address(0),
             "Dapp does not exist"
         );
         _;
@@ -92,15 +87,15 @@ contract CheddaDappExplorer is Context, Ownable {
     ) public view
         dappExists(contractAddress)
      returns (Review[] memory) {
-        Review[] memory __dapps = reviews[contractAddress];
+        Review[] memory _reviews = reviews[contractAddress];
         uint8 numberOfMatches = 0;
-        for (uint256 index = 0; index < __dapps.length; index++) {
-            Review memory dapp = __dapps[index];
+        for (uint256 index = 0; index < _reviews.length; index++) {
+            Review memory dapp = _reviews[index];
             if (dapp.timestamp > start && dapp.timestamp < end) {
                 numberOfMatches++;
             }
         }
-        return __dapps;
+        return _reviews;
     }
 
     function addRating(address contractAddress, uint256 rating)

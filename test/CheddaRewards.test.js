@@ -31,7 +31,7 @@ beforeEach(async function () {
 });
 
 describe("CheddaRewards", function () {
-    it("Can update dappstore", async function () {
+    it("Can issue rewards", async function () {
         let recipient = "0x1cbd3b2770909d4e10f157cabc84c7264073c9ec"
 
         await rewards.issueRewards(1, recipient)
@@ -46,4 +46,31 @@ describe("CheddaRewards", function () {
         console.log('balance is ', balance)
         console.log('totalSupply is ', totalSupply)
     });
+
+    it("Can load leaderboard", async function() {
+        let board = await rewards.leaderboard()
+        let addresses = [
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65",reward: 5},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc",reward: 1},
+            {address: "0x976ea74026e726554db657fa54763abd0c3a0aa9",reward: 1},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 1},
+            {address: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",reward: 3},
+            {address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",reward: 4},
+            {address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",reward: 4},
+            {address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",reward: 4},
+            {address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",reward: 4},
+            {address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",reward: 4},
+        ]
+        console.log('board = ', board)
+        for (const address of addresses) {
+            await rewards.issueRewards(address.reward, address.address)
+        }
+        board = await rewards.leaderboard()
+        console.log('board = ', board)
+    })
 });
