@@ -40,7 +40,7 @@ async function main() {
   await dappStore.deployed();
 
   const CheddaDappExplorer = await hre.ethers.getContractFactory("CheddaDappExplorer");
-  dappExplorer = await CheddaDappExplorer.deploy(dappStore.address);
+  dappExplorer = await CheddaDappExplorer.deploy();
   await dappExplorer.updateRegistry(registry.address)
 
   const CheddaMarket = await hre.ethers.getContractFactory("CheddaMarket");
@@ -55,6 +55,8 @@ async function main() {
   await registry.setDappstoreExplorer(dappExplorer.address)
   await registry.setRewards(rewards.address)
   await registry.setCheddaXP(xp.address)
+  await registry.setMarket(market.address)
+  await registry.setMarketExplorer(marketExplorer.address)
 
   console.log("CheddaAddressRegistry deployed to:", registry.address);
   await save()
