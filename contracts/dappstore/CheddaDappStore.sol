@@ -53,7 +53,7 @@ contract CheddaDappStore is Ownable, IStore {
     error DappNotFound();
 
     uint16 private _dappCount;
-    Dapp[] private _dapplist;
+    address[] private _dappAddresses;
     uint16 private _ratingPrecision = 100;
 
     mapping(address => Dapp) public _dapps;
@@ -95,7 +95,7 @@ contract CheddaDappStore is Ownable, IStore {
         });
         _dapps[contractAddress] = dapp;
         categories[category].push(contractAddress);
-        _dapplist.push(dapp);
+        _dappAddresses.push(contractAddress);
 
         emit DappAdded(name, contractAddress);
     }
@@ -107,14 +107,23 @@ contract CheddaDappStore is Ownable, IStore {
             "Dapp does not exist"
         );
 
-        Dapp memory dapp = _dapps[contractAddress];
+        Dapp storage dapp = _dapps[contractAddress];
         delete _dapps[contractAddress];
-        delete _dapplist[dapp.index];
+        delete _dappAddresses[dapp.index];
         delete likes[contractAddress];
         delete dislikes[contractAddress];
-        _dapplist[dapp.index] = _dapplist[_dapplist.length - 1];
-        _dapplist.pop();
+        _dappAddresses[dapp.index] = _dappAddresses[_dappAddresses.length - 1];
+        _dappAddresses.pop();
         emit DappRemoved(_dapps[contractAddress].name, contractAddress);
+    }
+
+    function updateDappMetadata(address contractAddress, string calldata metadataURI) public onlyOwner() {
+        require(contractAddress != address(0), "Address should not be zero");
+        require(
+            _dapps[contractAddress].contractAddress != address(0),
+            "Dapp does not exist"
+        );
+        _dapps[contractAddress].metadataURI = metadataURI;
     }
 
     function getDapp(address contractAddress)
@@ -130,15 +139,21 @@ contract CheddaDappStore is Ownable, IStore {
     public view
     returns (Dapp memory)
     {
-        return _dapplist[index];
+        require(index < _dappAddresses.length, "Invalid index");
+        address dappAddress =  _dappAddresses[index];
+        return _dapps[dappAddress];
     }
 
     function dapps() public view override returns (Dapp[] memory) {
-        return _dapplist;
+        Dapp[] memory dappList = new Dapp[](_dappAddresses.length);
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            dappList[i] = _dapps[_dappAddresses[i]];
+        }
+        return dappList;
     }
 
     function numberOfDapps() external view returns (uint256) {
-        return _dapplist.length;
+        return _dappAddresses.length;
     }
 
     function likeDapp(address contractAddress) public {
@@ -207,7 +222,7 @@ contract CheddaDappStore is Ownable, IStore {
         appAdmins[contractAddress][admin] = false;
     }
 
-    function featureDapp(address contractAddress, bool isFeatured) public onlyOwner() {
+    function setFeaturedDapp(address contractAddress, bool isFeatured) public onlyOwner() {
         require(contractAddress != address(0), "Address should not be zero");
         require(
             _dapps[contractAddress].contractAddress != address(0),
@@ -216,18 +231,19 @@ contract CheddaDappStore is Ownable, IStore {
         _dapps[contractAddress].isFeatured = isFeatured;
     }
 
-    function getFeaturedDapps() public view returns (Dapp[] memory) {
+    function featuredDapps() public view returns (Dapp[] memory) {
         uint256 featuredCount = 0;
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            Dapp storage dapp = _dapps[_dapplist[i].contractAddress];
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            Dapp storage dapp = _dapps[_dappAddresses[i]];
             if (dapp.isFeatured) {
                 featuredCount++;
             }
         }
+
         Dapp[] memory matchingDapps = new Dapp[](featuredCount);
         featuredCount = 0;
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            Dapp memory dapp = _dapps[_dapplist[i].contractAddress];
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            Dapp memory dapp = _dapps[_dappAddresses[i]];
             if (dapp.isFeatured) {
                 matchingDapps[featuredCount] = dapp;
                 featuredCount++;
@@ -236,7 +252,7 @@ contract CheddaDappStore is Ownable, IStore {
         return matchingDapps;
     }
 
-    function getDappsInCategory(string calldata category) public view returns (Dapp[] memory) {
+    function dappsInCategory(string calldata category) public view returns (Dapp[] memory) {
         require(categories[category].length != 0, "Invalid category");
         address[] memory dappAddresses = categories[category];
         Dapp[] memory dappList = new Dapp[](dappAddresses.length);
@@ -250,18 +266,20 @@ contract CheddaDappStore is Ownable, IStore {
        return categories[category].length;
     }
 
-    function getNewDapps(uint256 listedSince) public view returns (Dapp[] memory) {
+    function newDapps(uint256 listedSince) public view returns (Dapp[] memory) {
         uint256 count = 0;
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            if (_dapplist[i].listed >= listedSince) {
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            Dapp storage dapp = _dapps[_dappAddresses[i]];
+            if (dapp.listed >= listedSince) {
                 count++;
             }
         }
         Dapp[] memory matchingDapps = new Dapp[](count);
         count = 0;
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            if (_dapplist[i].listed >= listedSince) {
-                matchingDapps[count] = _dapplist[i];
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            Dapp storage dapp = _dapps[_dappAddresses[i]];
+            if (dapp.listed >= listedSince) {
+                matchingDapps[count] = dapp;
                 count++;
             }
         }
@@ -275,18 +293,18 @@ contract CheddaDappStore is Ownable, IStore {
         CheddaDappExplorer explorer = CheddaDappExplorer(registry.dappStoreExplorer());
         uint256 count = 0;
 
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            if (explorer.averageRating(_dapplist[i].contractAddress) > 300 &&
-                explorer.numberOfRatings(_dapplist[i].contractAddress) > 1) {
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            if (explorer.averageRating(_dappAddresses[i]) > 300 &&
+                explorer.numberOfRatings(_dappAddresses[i]) > 1) {
                 count++;
             }
         }
         Dapp[] memory matchingDapps = new Dapp[](count);
         count = 0;
-        for (uint256 i = 0; i < _dapplist.length; i++) {
-            if (explorer.averageRating(_dapplist[i].contractAddress) > 300 &&
-                explorer.numberOfRatings(_dapplist[i].contractAddress) > 1) {
-                matchingDapps[count] = _dapplist[i];
+        for (uint256 i = 0; i < _dappAddresses.length; i++) {
+            if (explorer.averageRating(_dappAddresses[i]) > 300 &&
+                explorer.numberOfRatings(_dappAddresses[i]) > 1) {
+                matchingDapps[count] = _dapps[_dappAddresses[i]];
                 count++;
             }
         }
