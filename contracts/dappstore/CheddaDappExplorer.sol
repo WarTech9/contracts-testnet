@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CheddaDappStore.sol";
 import "../chedda/CheddaRewards.sol";
@@ -15,7 +14,7 @@ struct Review {
     address author;
 }
 
-contract CheddaDappExplorer is Context, Ownable {
+contract CheddaDappExplorer is Ownable {
     event ReviewAdded(address indexed contractAddress, address indexed user);
     event RatingAdded(address indexed contractAddress, address indexed user, uint256 rating);
 
@@ -48,7 +47,6 @@ contract CheddaDappExplorer is Context, Ownable {
         );
         _;
     }
-
 
     function updateRegistry(address registryAddress) external onlyOwner() {
         registry = CheddaAddressRegistry(registryAddress);

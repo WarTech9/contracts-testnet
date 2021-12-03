@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface IMintLock {
@@ -9,7 +8,7 @@ interface IMintLock {
     function recordMint() external returns (bool);
 }
 
-contract TimedMintlock is Context, Ownable, IMintLock {
+contract TimedMintlock is Ownable, IMintLock {
 
     uint256 public cooldown;
     mapping(address => uint256) public timeouts;

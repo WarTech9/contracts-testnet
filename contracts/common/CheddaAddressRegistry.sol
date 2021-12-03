@@ -2,9 +2,8 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
 
-contract CheddaAddressRegistry is Context, Ownable {
+contract CheddaAddressRegistry is Ownable {
 
     event CheddaXPUpdated(address indexed newAddress, address indexed caller);
     event DappStoreUpdated(address indexed newAddress, address indexed caller);
@@ -35,7 +34,7 @@ contract CheddaAddressRegistry is Context, Ownable {
         rewards = rewardsAddress;
         emit RewardsUpdated(rewardsAddress, _msgSender());
     }
-    
+
     function setDappStore(address storeAddress) external onlyOwner() {
         dappStore = storeAddress;
         emit DappStoreUpdated(storeAddress, _msgSender());

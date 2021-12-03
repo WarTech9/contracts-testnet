@@ -1,11 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../common/CheddaAddressRegistry.sol";
 
-contract CheddaXP is Context, Ownable {
+contract CheddaXP is Ownable {
     event Minted(uint256 amount, address to);
     event Burned(uint256 amount, address from);
     event Slashed(uint256 amount, address owner);

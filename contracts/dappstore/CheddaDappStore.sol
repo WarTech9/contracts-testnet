@@ -1,6 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./CheddaDappExplorer.sol";
+import "../common/CheddaAddressRegistry.sol";
 import "hardhat/console.sol";
 
 struct Dapp {
@@ -39,10 +42,15 @@ interface IStore {
     function isCheddaStore() external pure returns (bool);
 }
 
-contract CheddaDappStore is IStore {
+contract CheddaDappStore is Ownable, IStore {
+
+    event DappAdded(string indexed name, address indexed contractAddress);
+    event DappRemoved(string indexed name, address indexed contractAddress);
+
+    error DappNotFound();
+
     uint16 private _dappCount;
     Dapp[] private _dapplist;
-    uint16 private _numberOfDapps = 0; // use counter?
     uint16 private _ratingPrecision = 100;
 
     mapping(address => Dapp) public _dapps;
@@ -53,10 +61,12 @@ contract CheddaDappStore is IStore {
     mapping(address => DappReview[]) public reviews;
     mapping(string => address[]) public categories;
 
-    event DappAdded(string indexed name, address indexed contractAddress);
-    event DappRemoved(string indexed name, address indexed contractAddress);
+    CheddaAddressRegistry public registry;
 
-    error DappNotFound();
+    function updateRegistry(address registryAddress) external onlyOwner() {
+        registry = CheddaAddressRegistry(registryAddress);
+        console.log("updating registry to %s", registryAddress);
+    }
 
     function addDapp(
         string memory name,
@@ -65,7 +75,7 @@ contract CheddaDappStore is IStore {
         address contractAddress,
         string memory category,
         string calldata uri
-    ) public override {
+    ) public override onlyOwner() {
         // require(dapp.contractAddress != address(0), "Address is zero");
         // require(_dapps[contractAddress].contractAddress == address(0), "Dapp already exists");
         uint16 index = _dappCount++;
@@ -170,7 +180,7 @@ contract CheddaDappStore is IStore {
     }
 
 
-    function addDappAdmin(address contractAddress, address admin) public {
+    function addDappAdmin(address contractAddress, address admin) public onlyOwner() {
         require(
             _dapps[contractAddress].contractAddress != address(0),
             "Dapp does not exist"
@@ -178,7 +188,7 @@ contract CheddaDappStore is IStore {
         appAdmins[contractAddress][admin] = true;
     }
 
-    function removeDappAdmin(address contractAddress, address admin) public {
+    function removeDappAdmin(address contractAddress, address admin) public onlyOwner() {
         require(
             _dapps[contractAddress].contractAddress != address(0),
             "Dapp does not exist"

@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../common/CheddaAddressRegistry.sol";
 import "./CheddaXP.sol";
@@ -32,7 +31,7 @@ interface ICheddaRewards {
    function issueRewards(Actions action, address user) external;
 }
 
-contract CheddaRewards is Context, Ownable, ICheddaRewards {
+contract CheddaRewards is Ownable, ICheddaRewards {
 
     // Rewards issued in epoch
     struct UserRewards {
