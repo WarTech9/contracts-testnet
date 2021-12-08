@@ -10,6 +10,7 @@ enum Actions {
     Upvote,
     Downvote,
     Like,
+    Dislike,
     Rate,
     Review,
     Vote,
@@ -73,6 +74,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     uint256 public POINTS_PER_DOWNVOTE = 1;
     uint256 public POINTS_PER_UPVOTE = 1;
     uint256 public POINTS_PER_LIKE = 10;
+    uint256 public POINTS_PER_DISLIKE = 10;
     uint256 public POINTS_PER_RATE = 10;
     uint256 public POINTS_PER_REVIEW = 30;
     uint256 public POINTS_PER_VOTE = 50;
@@ -102,6 +104,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         setRewards(Actions.Upvote, POINTS_PER_UPVOTE);
         setRewards(Actions.Downvote, POINTS_PER_UPVOTE);
         setRewards(Actions.Like, POINTS_PER_LIKE);
+        setRewards(Actions.Dislike, POINTS_PER_LIKE);
         setRewards(Actions.Rate, POINTS_PER_RATE);
         setRewards(Actions.Review, POINTS_PER_REVIEW);
         setRewards(Actions.Vote, POINTS_PER_VOTE);

@@ -3,6 +3,20 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface ICheddaAddressRegistry {
+    function cheddaXP() external view returns (address);
+
+    function dappStore() external view returns (address);
+
+    function market() external view returns (address);
+
+    function dappStoreExplorer() external view returns (address);
+    
+    function marketExplorer() external view returns (address);
+
+    function rewards() external view returns (address);
+}
+
 contract CheddaAddressRegistry is Ownable {
 
     event CheddaXPUpdated(address indexed newAddress, address indexed caller);

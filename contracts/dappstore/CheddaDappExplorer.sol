@@ -14,7 +14,18 @@ struct Review {
     address author;
 }
 
-contract CheddaDappExplorer is Ownable {
+interface IStoreExplorer {
+    function numberOfRatings(address contractAddress)
+        external
+        view
+        returns (uint256);
+
+    function averageRating(address contractAddress)
+        external
+        view
+        returns (uint256); 
+}
+contract CheddaDappExplorer is Ownable, IStoreExplorer {
     event ReviewAdded(address indexed contractAddress, address indexed user);
     event RatingAdded(address indexed contractAddress, address indexed user, uint256 rating);
 
@@ -26,7 +37,7 @@ contract CheddaDappExplorer is Ownable {
     /*
     Dapp contract address => number of ratings dapp has received.
      */
-    mapping(address => uint256) public numberOfRatings;
+    mapping(address => uint256) public ratingsCount;
 
     // dapp address => User address => rating
     mapping(address => mapping(address => uint256)) public userRatings;
@@ -108,24 +119,33 @@ contract CheddaDappExplorer is Ownable {
         );
         userRatings[contractAddress][msg.sender] = rating;
         ratings[contractAddress] += rating;
-        numberOfRatings[contractAddress] += 1;
+        ratingsCount[contractAddress] += 1;
 
         ICheddaRewards rewards = ICheddaRewards(registry.rewards());
         rewards.issueRewards(Actions.Rate, _msgSender());
         emit RatingAdded(contractAddress, _msgSender(), rating);
     }
 
+    function numberOfRatings(address contractAddress)
+        public
+        view
+        override
+        returns (uint256) {
+        return ratingsCount[contractAddress];
+     }
+
     function averageRating(address contractAddress)
         public
         view
+        override
         dappExists(contractAddress)
         returns (uint256)
     {
-        uint256 ratingsCount = numberOfRatings[contractAddress];
-        if (ratingsCount == 0) {
+        uint256 count = ratingsCount[contractAddress];
+        if (count == 0) {
           return 0;
         }
-        return ratings[contractAddress] / ratingsCount;
+        return ratings[contractAddress] / count;
     }
 
     function myRating(address contractAddress)

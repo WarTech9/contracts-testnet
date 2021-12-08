@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../common/CheddaAddressRegistry.sol";
 
 contract CheddaXP is Ownable {
-    event Minted(uint256 amount, address to);
-    event Burned(uint256 amount, address from);
-    event Slashed(uint256 amount, address owner);
+    event Minted(address indexed to, uint256 amount);
+    event Burned(address indexed from, uint256 amount);
+    event Slashed( address indexed owner, uint256 amount);
 
     string public name;
     string public symbol;
@@ -40,7 +40,7 @@ contract CheddaXP is Ownable {
         require(totalSupply - amountToBurn >= 0, "Total Supply: Invalid amount");
         totalSupply -= amountToBurn;
         balances[owner] -= amountToBurn;
-        emit Slashed(amount, owner);
+        emit Slashed(owner, amountToBurn);
     }
 
     function burn(uint256 amount) public {
@@ -55,7 +55,7 @@ contract CheddaXP is Ownable {
         require(amount != 0, "amount should not be 0");
         totalSupply += amount;
         balances[owner] = balances[owner] + amount;
-        emit Minted(amount, owner);
+        emit Minted(owner, amount);
     }
 
     function _burn(uint256 amount) internal {
@@ -63,7 +63,6 @@ contract CheddaXP is Ownable {
         require(balanceOf(msg.sender) >= amount, "Balance < amount");
         totalSupply -= amount;
         balances[msg.sender] -= amount;
-        emit Burned(amount, _msgSender());
+        emit Burned(_msgSender(), amount);
     }
-
 }
