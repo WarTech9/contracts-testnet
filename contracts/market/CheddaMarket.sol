@@ -62,8 +62,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
 
     address payable public feeRecipient;
 
-
-    CheddaAddressRegistry public registry;
+    ICheddaAddressRegistry public registry;
 
     modifier onlyItemOwner(address nftContract, uint256 tokenId) {
         if (_isERC721(nftContract)) {
@@ -74,7 +73,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
     }
 
     function updateRegistry(address registryAddress) public onlyOwner() {
-        registry = CheddaAddressRegistry(registryAddress);
+        registry = ICheddaAddressRegistry(registryAddress);
     }
 
     function setMarketFee(uint256 newFee) public onlyOwner() {

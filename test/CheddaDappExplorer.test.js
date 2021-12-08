@@ -38,7 +38,7 @@ beforeEach(async function () {
 
   const CheddaDappStore = await ethers.getContractFactory("CheddaDappStore");
   store = await CheddaDappStore.deploy();
-  await store.deployed();
+  await store.updateRegistry(registry.address)
 
   const CheddaDappExplorer = await ethers.getContractFactory("CheddaDappExplorer");
   explorer = await CheddaDappExplorer.deploy();
@@ -55,45 +55,51 @@ beforeEach(async function () {
 
 
 describe("CheddaDappExplorer", function () {
-  // it("Can rate dapp", async function () {
-  //   await store.addDapp(
-  //     dappName,
-  //     dappNetwork,
-  //     dappChainId,
-  //     dappAddress,
-  //     dappCategory,
-  //     dappUri,
-  //   );
+  it("Can rate dapp", async function () {
+    await store.addDapp(
+      dappName,
+      dappChainId,
+      dappAddress,
+      dappCategory,
+      dappUri,
+    );
 
-  //   let averageRating = await explorer.averageRating(dappAddress)
-  //   expect(averageRating).to.equal(0);
+    let averageRating = await explorer.averageRating(dappAddress)
+    expect(averageRating).to.equal(0);
 
-  //   await explorer.addRating(dappAddress, 500);
-  //   averageRating = await explorer.averageRating(dappAddress);
-  //   expect(averageRating).to.equal(500);
+    await explorer.addRating(dappAddress, 500);
+    averageRating = await explorer.averageRating(dappAddress);
+    expect(averageRating).to.equal(500);
 
-  //   await explorer.connect(signer1).addRating(dappAddress, 300);
+    await explorer.connect(signer1).addRating(dappAddress, 300);
 
-  //   averageRating = await explorer.averageRating(dappAddress);
-  //   expect(averageRating).to.equal(400);
-  // });
-
-
-  // it("Can review dapp", async function () {
+    averageRating = await explorer.averageRating(dappAddress);
+    expect(averageRating).to.equal(400);
+  });
 
 
-  //   let reviews = await explorer.getReviews(dappAddress);
-  //   console.log("reviews are: ", reviews);
-  //   let averageRating = await explorer.averageRating(dappAddress);
-  //   expect(reviews.length).to.equal(0);
-  //   expect(averageRating).to.equal(0);
+  it("Can review dapp", async function () {
 
-  //   await explorer.addReview(dappAddress, "http://myreview.com", 500);
-  //   reviews = await explorer.getReviews(dappAddress);
-  //   averageRating = await explorer.averageRating(dappAddress)
-  //   expect(reviews.length).to.equal(1);
-  //   expect(averageRating).to.equal(500);
-  // });
+    await store.addDapp(
+      dappName,
+      dappChainId,
+      dappAddress,
+      dappCategory,
+      dappUri,
+    );
+
+    let reviews = await explorer.getReviews(dappAddress);
+    console.log("reviews are: ", reviews);
+    let averageRating = await explorer.averageRating(dappAddress);
+    expect(reviews.length).to.equal(0);
+    expect(averageRating).to.equal(0);
+
+    await explorer.addReview(dappAddress, "http://myreview.com", 500);
+    reviews = await explorer.getReviews(dappAddress);
+    averageRating = await explorer.averageRating(dappAddress)
+    expect(reviews.length).to.equal(1);
+    expect(averageRating).to.equal(500);
+  });
 
   it("Can issue rewards", async function() {
         let recipient = "0x1cbd3b2770909d4e10f157cabc84c7264073c9ec"
@@ -114,7 +120,6 @@ describe("CheddaDappExplorer", function () {
 
         await store.addDapp(
           dappName,
-          dappNetwork,
           dappChainId,
           dappAddress,
           dappCategory,
