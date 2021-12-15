@@ -26,7 +26,7 @@ describe("CheddaAddressRegistry", function () {
         let store = await Dappstore.deploy()
         
         let CheddaDappExplorer = await ethers.getContractFactory("CheddaDappExplorer")
-        let explorer = await CheddaDappExplorer.deploy(store.address)
+        let explorer = await CheddaDappExplorer.deploy()
         
         await registry.setDappStore(explorer.address)
         let address = await registry.dappStore()

@@ -1,6 +1,7 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
-const addresses = require("../unknown-market.addresses.json")
+const marketAddress = require("../addresses/market.json")
+const explorerAddress = require("../addresses/market-explorer.json")
 const fs = require('fs');
 
 const config = {
@@ -14,10 +15,11 @@ let market
 let nft
 let explorer
 
-const itemCount = 30
+const startIndex = 1
+const endIndex = 100
 let feeRecipient;
 let tokenRecipient;
-const mintFee = ethers.utils.parseUnits("0.1", "ether");
+const mintFee = ethers.utils.parseUnits("0.001", "ether");
 
   // Steps:
   // 1. Deploy NFT Market
@@ -30,11 +32,12 @@ async function initialize() {
     console.log(`{feeRecipient: ${feeRecipient.address}, tokenRecipient: ${tokenRecipient.address}}`)
     
     const CheddaMarket = await hre.ethers.getContractFactory("CheddaMarket");
-    market = await CheddaMarket.attach(addresses.market);
-    console.log('market deployed to address: ', market.address)
+    market = await CheddaMarket.attach(marketAddress.market);
+    console.log('CheddaMarket attached to address: ', market.address)
 
     const CheddaMarketExplorer = await hre.ethers.getContractFactory("CheddaMarketExplorer");
-    explorer = await CheddaMarketExplorer.attach(addresses.explorer)
+    explorer = await CheddaMarketExplorer.attach(explorerAddress.marketExplorer)
+    console.log('CheddaMarketExplorer attached to address: ', explorer.address)
 
     const CheddaNFT = await hre.ethers.getContractFactory("CheddaNFT")
     nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
@@ -48,7 +51,8 @@ function randomNumber() {
 }
 async function listCollection(nft) {
     let txs = []
-    for (let i = 1; i < itemCount; i++) {
+    for (let i = startIndex; i <= endIndex; i++) {
+        console.log(`***** Processing index ${i}`)
         let metadataURI = getTokenURI(i)
         let tokenId = await mintNFT(tokenRecipient.address, metadataURI, mintFee)
         console.log(`*** Minted tokenID: ${JSON.stringify(tokenId)}`)

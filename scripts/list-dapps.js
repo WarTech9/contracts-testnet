@@ -1,8 +1,7 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
 const dapplist = require("../dapps/dapplist.json")
-const addresses = require("../unknown-store.addresses.json")
-
+const addresses = require("../addresses/dappstore.json")
 let dappStore
 
 async function initialize() {
@@ -29,7 +28,6 @@ async function readDappList() {
         console.log("Dapp => ", dapp)
         let tx = await dappStore.addDapp(
             dapp.name,
-            dapp.network,
             dapp.chainId,
             dapp.contractAddress,
             dapp.category,

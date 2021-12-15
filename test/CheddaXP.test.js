@@ -15,7 +15,7 @@ beforeEach(async function () {
     xp = await CheddaXP.deploy();
 
     const CheddaRewards = await ethers.getContractFactory("CheddaRewards")
-    rewards = await CheddaRewards.deploy(xp.address)
+    rewards = await CheddaRewards.deploy()
 
     const CheddaAddressRegistry = await ethers.getContractFactory("CheddaAddressRegistry")
     const registry = await CheddaAddressRegistry.deploy()

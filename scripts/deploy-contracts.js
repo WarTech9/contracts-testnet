@@ -37,7 +37,7 @@ async function main() {
 
   const CheddaDappStore = await hre.ethers.getContractFactory("CheddaDappStore");
   dappStore = await CheddaDappStore.deploy();
-  await dappStore.deployed();
+  await dappStore.updateRegistry(registry.address)
 
   const CheddaDappExplorer = await hre.ethers.getContractFactory("CheddaDappExplorer");
   dappExplorer = await CheddaDappExplorer.deploy();
@@ -49,7 +49,7 @@ async function main() {
 
   const CheddaMarketExplorer = await hre.ethers.getContractFactory("CheddaMarketExplorer");
   marketExplorer = await CheddaMarketExplorer.deploy();
-  await marketExplorer.deployed();
+  await marketExplorer.updateRegistry(registry.address)
   
   await registry.setDappStore(dappStore.address)
   await registry.setDappstoreExplorer(dappExplorer.address)
@@ -68,9 +68,13 @@ async function save() {
   const network = await provider.getNetwork()
   let config = `
   {
+    "registry": "${registry.address}",
+    "xp": "${xp.address}",
     "dappStore": "${dappStore.address}",
     "dappStoreExplorer": "${dappExplorer.address}",
-    "registry": "${registry.address}"
+    "market": "${market.address}",
+    "marketExplorer": "${marketExplorer.address}",
+    "rewards": "${rewards.address}"
   }
 
   `
