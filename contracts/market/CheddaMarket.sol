@@ -21,12 +21,14 @@ struct Sale {
     address seller;
     address buyer;
     uint256 amountPaid;
+    uint256 timestamp;
 }
 
 contract CheddaMarket is Ownable, ReentrancyGuard {
 
     event ItemListed(address indexed nftContract, uint256 indexed itemId, uint256 price);
     event ItemSold(address indexed nftContract, uint256 indexed itemId, uint256 price);
+    event ListingCancelled(address indexed nftContract, uint256 indexed itemId);
 
     event MarketFeeUpdated(uint256 marketFee, address indexed updatedBy);
 
@@ -54,6 +56,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
     // NFT contract address => Token ID => Sale Price
     mapping(address => mapping(uint256 => uint256)) public offers;
 
+    // All items ever listed, items do not get deleted.
     Listing[] public allListings;
 
     /// @notice Market fee in basis points. 
@@ -114,21 +117,24 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         listing.seller.transfer(amountPaid);
         IERC721(nftContract).transferFrom(address(this), _msgSender(), tokenId);
 
-        Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice);
+        Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice, block.timestamp);
         sales[nftContract][tokenId].push(newSale);
-        CheddaMarketExplorer(registry.marketExplorer()).reportMarketSale(nftContract, tokenId, listing.seller, _msgSender());
 
         _delistItem(nftContract, tokenId);
+
+        CheddaMarketExplorer(registry.marketExplorer()).reportMarketSale(nftContract, tokenId, amountPaid, listing.seller, _msgSender());
 
         emit ItemSold(nftContract, tokenId, itemPrice);
     }
 
-    function cancelSale(address nftContract, uint256 tokenId)
+    function cancelListing(address nftContract, uint256 tokenId)
         external
         onlyItemOwner(nftContract, tokenId)
     {
-        require(_saleItemExists(nftContract, tokenId), "Market: Cancel item not listed");
+        require(_saleItemExists(nftContract, tokenId), "Market: Item not listed");
         _delistItem(nftContract, tokenId);
+        CheddaMarketExplorer(registry.marketExplorer()).reportListingCancellation(nftContract, tokenId);
+        emit ListingCancelled(nftContract, tokenId);
     }
 
     function listItemForAuction(
