@@ -51,6 +51,12 @@ contract CheddaMarketExplorer is Ownable {
         LikesDislikes likesDislikes;
     }
 
+    struct OwnedItem {
+        address nftContract;
+        uint256 tokenID;
+        uint256 lastPrice;
+    }
+    
     ICheddaAddressRegistry public registry;
 
     // nft contract addres => number of likes
@@ -80,11 +86,8 @@ contract CheddaMarketExplorer is Ownable {
     // minimum ration between likes:dislikes for item to be considered popular. n:1 ratio
     uint256 public popularItemRatio = 2;
 
-    struct OwnedItem {
-        address nftContract;
-        uint256 tokenID;
-        uint256 lastPrice;
-    }
+    uint256 private constant MAX_UINT =  2 ** 256 - 1;
+
     mapping(address => OwnedItem[]) public itemsOwned;
 
 
@@ -101,17 +104,6 @@ contract CheddaMarketExplorer is Ownable {
     // NFT address to market item
     mapping(address => MarketItem[]) public collectionItems;
 
-    constructor() {
-        allItems.push(
-            MarketItem({
-            nftContract: address(0),
-            tokenID: 0,
-            tokenURI: "",
-            price: 0,
-            listingTime: block.timestamp
-        })
-        );
-    }
     function updateRegistry(address registryAddress) public onlyOwner {
         registry = ICheddaAddressRegistry(registryAddress);
     }
@@ -224,7 +216,7 @@ contract CheddaMarketExplorer is Ownable {
     function getAllItems() public view returns (MarketItemWithLikes[] memory) {
         uint256 length = allItems.length;
         MarketItemWithLikes[] memory items = new MarketItemWithLikes[](length);
-        for (uint256 i = 1; i < length; i++) {
+        for (uint256 i = 0; i < length; i++) {
             MarketItem storage item = allItems[i];
             LikesDislikes memory likesDislikes = _itemLikesDislikes(item.nftContract, item.tokenID);
             items[i] = MarketItemWithLikes({
@@ -241,7 +233,7 @@ contract CheddaMarketExplorer is Ownable {
         returns (MarketItemWithLikes[] memory)
     {
         uint256 count = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        for (uint256 i = 0; i < allItems.length; i++) {
             if (allItems[i].listingTime > time) {
                 count++;
             }
@@ -250,7 +242,7 @@ contract CheddaMarketExplorer is Ownable {
             count
         );
         count = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        for (uint256 i = 0; i < allItems.length; i++) {
             if (allItems[i].listingTime > time) {
                 MarketItem storage item = allItems[i];
                 LikesDislikes memory likesDislikes = _itemLikesDislikes(item.nftContract, item.tokenID);
@@ -265,7 +257,7 @@ contract CheddaMarketExplorer is Ownable {
 
     function popularItems() public view returns (MarketItemWithLikes[] memory) {
         uint256 count = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        for (uint256 i = 0; i < allItems.length; i++) {
             MarketItem storage item = allItems[i];
             LikesDislikes memory likesDislikes = _itemLikesDislikes(item.nftContract, item.tokenID);
             if (
@@ -282,7 +274,7 @@ contract CheddaMarketExplorer is Ownable {
 
         MarketItemWithLikes[] memory popular = new MarketItemWithLikes[](count);
         count = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        for (uint256 i = 0; i < allItems.length; i++) {
             MarketItem storage item = allItems[i];
             LikesDislikes memory likesDislikes = _itemLikesDislikes(item.nftContract, item.tokenID);
 
@@ -393,8 +385,8 @@ contract CheddaMarketExplorer is Ownable {
         address seller,
         address buyer
     ) public {
-        uint256 index = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        uint256 index = MAX_UINT;
+        for (uint256 i = 0; i < allItems.length; i++) {
             if (
                 allItems[i].nftContract == nftContract &&
                 allItems[i].tokenID == tokenID
@@ -403,7 +395,7 @@ contract CheddaMarketExplorer is Ownable {
                 break;
             }
         }
-        if (index != 0) {
+        if (index != MAX_UINT) {
             allItems[index] = allItems[allItems.length - 1];
             allItems.pop();
         }
@@ -425,8 +417,8 @@ contract CheddaMarketExplorer is Ownable {
     }
 
     function reportListingCancellation(address nftContract, uint256 tokenID) public {
-        uint256 index = 0;
-        for (uint256 i = 1; i < allItems.length; i++) {
+        uint256 index = MAX_UINT;
+        for (uint256 i = 0; i < allItems.length; i++) {
             if (
                 allItems[i].nftContract == nftContract &&
                 allItems[i].tokenID == tokenID
@@ -435,7 +427,7 @@ contract CheddaMarketExplorer is Ownable {
                 break;
             }
         }
-        if (index != 0) {
+        if (index != MAX_UINT) {
             allItems[index] = allItems[allItems.length - 1];
             allItems.pop();
         }
