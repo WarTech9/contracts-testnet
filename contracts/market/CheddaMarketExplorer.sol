@@ -47,7 +47,7 @@ contract CheddaMarketExplorer is Ownable {
     }
 
     struct NFTDetailsWithLikes {
-        NFTDetails details;
+        NFTDetails item;
         LikesDislikes likesDislikes;
     }
 
@@ -342,8 +342,7 @@ contract CheddaMarketExplorer is Ownable {
     function reportListing(
         address nftContract,
         uint256 tokenID,
-        uint256 price,
-        address seller
+        uint256 price
     ) public {
         string memory tokenURI = "";
         if (_isERC721Metadata(nftContract)) {
@@ -374,8 +373,16 @@ contract CheddaMarketExplorer is Ownable {
         }
 
         collectionItems[nftContract].push(item);
-        itemsOwned[seller].push(OwnedItem(nftContract, tokenID, price));
     }
+
+    function reportItemAdded(        
+        address nftContract,
+        uint256 tokenID,
+        uint256 amount,
+        address owner
+        ) public {
+            itemsOwned[owner].push(OwnedItem(nftContract, tokenID, amount));
+        }
 
     // todo: add marketOnly modiifer
     function reportMarketSale(
@@ -451,7 +458,7 @@ contract CheddaMarketExplorer is Ownable {
             );
             LikesDislikes memory likesDislikes = _itemLikesDislikes(currentItem.nftContract, currentItem.tokenID);
             usersItems[i] = NFTDetailsWithLikes({
-                details: details,
+                item: details,
                 likesDislikes: likesDislikes
             });
         }

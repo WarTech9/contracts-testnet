@@ -5,7 +5,6 @@ const { ethers } = require("hardhat");
 let CheddaMarket;
 let market;
 let explorer;
-let registry
 let CheddaNFT;
 let nft;
 let feeRecipient;

@@ -88,18 +88,21 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         feeRecipient = newAddress;
     }
 
+    function addItemToMarket(address nftContract, uint256 tokenId) external onlyItemOwner(nftContract, tokenId) {
+        CheddaMarketExplorer(registry.marketExplorer()).reportItemAdded(nftContract, tokenId, 0, _msgSender());
+    }
+
     function listItemForSale(
         address nftContract,
         uint256 tokenId,
         uint256 price
     ) external onlyItemOwner(nftContract, tokenId) {
         require(!_saleItemExists(nftContract, tokenId), "Market: Already listed");
-        IERC721(nftContract).transferFrom(_msgSender(), address(this), tokenId);
         Listing memory listing = Listing(nftContract, tokenId, payable(_msgSender()), price);
         listings[nftContract][tokenId] = listing;
         allListings.push(listing);
         tokenIdsForSale[nftContract].push(tokenId);
-        CheddaMarketExplorer(registry.marketExplorer()).reportListing(nftContract, tokenId, price, _msgSender());
+        CheddaMarketExplorer(registry.marketExplorer()).reportListing(nftContract, tokenId, price);
         emit ItemListed(nftContract, tokenId, price);
     }
 
@@ -115,7 +118,7 @@ contract CheddaMarket is Ownable, ReentrancyGuard {
         }
         uint256 amountPaid = msg.value - fee;
         listing.seller.transfer(amountPaid);
-        IERC721(nftContract).transferFrom(address(this), _msgSender(), tokenId);
+        IERC721(nftContract).transferFrom(listing.seller, _msgSender(), tokenId);
 
         Sale memory newSale = Sale(listing.seller, _msgSender(), itemPrice, block.timestamp);
         sales[nftContract][tokenId].push(newSale);
