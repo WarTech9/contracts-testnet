@@ -58,7 +58,7 @@ contract CheddaDappStore is Ownable, IStore {
     address[] private _dappAddresses;
 
     mapping(address => Dapp) public _dapps;
-    mapping(address => mapping(address => bool)) private appAdmins;
+    mapping(address => mapping(address => bool)) private dappAdmins;
     mapping(string => address[]) public categories;
 
     ICheddaAddressRegistry public registry;
@@ -68,6 +68,11 @@ contract CheddaDappStore is Ownable, IStore {
             _dapps[contractAddress].contractAddress != address(0),
             "Invalid address"
         );
+        _;
+    }
+
+    modifier isDappAdmin(address contractAddress, address adminAddress) {
+        require(dappAdmins[contractAddress][adminAddress], "Not dapp admin");
         _;
     }
 
@@ -122,7 +127,7 @@ contract CheddaDappStore is Ownable, IStore {
     function updateDappMetadata(
         address contractAddress,
         string calldata metadataURI
-    ) public onlyOwner dappExists(contractAddress) {
+    ) public dappExists(contractAddress)  isDappAdmin(contractAddress, _msgSender()){
         _dapps[contractAddress].metadataURI = metadataURI;
     }
 
@@ -176,7 +181,7 @@ contract CheddaDappStore is Ownable, IStore {
         onlyOwner
         dappExists(contractAddress)
     {
-        appAdmins[contractAddress][admin] = true;
+        dappAdmins[contractAddress][admin] = true;
     }
 
     function removeDappAdmin(address contractAddress, address admin)
@@ -184,9 +189,9 @@ contract CheddaDappStore is Ownable, IStore {
         onlyOwner
         dappExists(contractAddress)
     {
-        require(appAdmins[contractAddress][admin] == true, "Not admin address");
+        require(dappAdmins[contractAddress][admin] == true, "Not admin address");
 
-        appAdmins[contractAddress][admin] = false;
+        dappAdmins[contractAddress][admin] = false;
     }
 
     function setFeaturedDapp(address contractAddress, bool isFeatured)
