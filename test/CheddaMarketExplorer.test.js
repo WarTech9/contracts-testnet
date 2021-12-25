@@ -130,15 +130,11 @@ describe("CheddaMarket", function () {
       .connect(tokenRecipient)
       .listItemForSale(nft.address, 1, price);
 
-    let itemsOwned = await explorer.getItemsOwned(tokenRecipient.address);
-    console.log('items owned 1 = ', itemsOwned)
-    expect(itemsOwned.length).to.equal(1)
+    itemsOwned = await explorer.getItemsOwned(feeRecipient.address);
+   console.log('items owned 1 = ', itemsOwned)
+   expect(itemsOwned.length).to.equal(0)
 
-    await market.buyItem(nft.address, 1, { value: price});
-    itemsOwned = await explorer.getItemsOwned(tokenRecipient.address);
-    console.log('items owned after buyItem = ', itemsOwned)
-    expect(itemsOwned.length).to.equal(1)
-
+    await market.connect(feeRecipient).buyItem(nft.address, 1, { value: price});
     itemsOwned = await explorer.getItemsOwned(feeRecipient.address);
     console.log('items owned by buyer = ', itemsOwned)
     expect(itemsOwned.length).to.equal(1)

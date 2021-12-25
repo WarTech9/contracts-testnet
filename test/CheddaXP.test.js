@@ -2,6 +2,7 @@
 const { expect } = require("chai");
 const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
+const { expectRevert } = require("@openzeppelin/test-helpers")
 
 let xp
 let rewards;
@@ -27,33 +28,33 @@ describe("CheddaXP", function () {
     // can only test with onlyContract() modifiers disabled
     it("Can mint", async function () {
 
-        let totalSupply = await xp.totalSupply()
-        console.log('totalSupply = ', totalSupply)
-
         const amount = BigNumber.from(100)
-        let tx = await xp.mint(amount.toString(), feeRecipient.address)
-        await tx.wait()
+        await expectRevert(
+            xp.mint(amount.toString(), feeRecipient.address),
+            'Not allowed: Only Rewards' 
+        );
 
-        totalSupply = await xp.totalSupply()
-        console.log('totalSupply = ', totalSupply)
+    //     let totalSupply = await xp.totalSupply()
+    //     console.log('totalSupply = ', totalSupply)
 
-        const balance = await xp.balanceOf(feeRecipient.address)
-        console.log('balance = ', balance.toString())
-        expect(amount.toString()).to.equal(totalSupply.toString())
-        expect(totalSupply.toString()).to.equal(balance.toString())
+    //     const amount = BigNumber.from(100)
+    //     let tx = await xp.mint(amount.toString(), feeRecipient.address)
+    //     await tx.wait()
+
+    //     totalSupply = await xp.totalSupply()
+    //     console.log('totalSupply = ', totalSupply)
+
+    //     const balance = await xp.balanceOf(feeRecipient.address)
+    //     console.log('balance = ', balance.toString())
+    //     expect(amount.toString()).to.equal(totalSupply.toString())
+    //     expect(totalSupply.toString()).to.equal(balance.toString())
     });
 
     it("Can burn", async function() {
         const amount = BigNumber.from(100)
-        let tx = await xp.mint(amount.toString(), feeRecipient.address)
-        await tx.wait()
-
-        const burnAmount = BigNumber.from(50)
-        tx = await xp.connect(feeRecipient).burn(burnAmount.toString())
-
-        let totalSupply = await xp.totalSupply()
-        const balance = await xp.balanceOf(feeRecipient.address)
-        expect(balance.toString()).to.equal(totalSupply.toString())
-        expect(burnAmount.toString()).to.equal(totalSupply.toString())
+        await expectRevert(
+            xp.burn(amount.toString()),
+            'Balance < amount' 
+        );
     });
 });

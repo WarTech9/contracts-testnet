@@ -17,7 +17,7 @@ async function main() {
   await marketExplorer.updateRegistry(registry.address)
   await registry.setMarketExplorer(marketExplorer.address)
 
-  console.log("CheddaMarketExplorer deployed to:", registry.address);
+  console.log("CheddaMarketExplorer deployed to:", marketExplorer.address);
   await save()
 }
 
