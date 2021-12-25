@@ -2,7 +2,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-let CheddaNFT;
+let MarketNFT;
 let nft;
 let feeRecipient;
 let tokenRecipient;
@@ -14,12 +14,12 @@ const metadataURI = "https://ipfs/metadata/myHash";
 beforeEach(async function () {
   const signers = await ethers.getSigners();
   [feeRecipient, tokenRecipient] = [signers[0], signers[1]];
-  CheddaNFT = await ethers.getContractFactory("CheddaNFT");
-  nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, metadataURI, "Chedda NFT", "CNFT");
+  MarketNFT = await ethers.getContractFactory("MarketNFT");
+  nft = await MarketNFT.deploy(mintFee, feeRecipient.address, metadataURI, "Chedda NFT", "CNFT");
   await nft.deployed();
 });
 
-describe("CheddaNFT", function () {
+describe("MarketNFT", function () {
   it("Can mint", async function () {
     expect(await nft.totalSupply()).to.equal(0);
 

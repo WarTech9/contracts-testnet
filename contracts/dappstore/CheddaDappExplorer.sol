@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CheddaDappStore.sol";
-import "../chedda/CheddaRewards.sol";
+import "../rewards/CheddaRewards.sol";
 import "hardhat/console.sol";
 
 struct Review {

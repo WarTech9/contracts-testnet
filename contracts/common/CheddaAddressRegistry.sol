@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 interface ICheddaAddressRegistry {
     function cheddaXP() external view returns (address);
 
+    function cheddaNFT() external view returns (address);
+
     function dappStore() external view returns (address);
 
     function market() external view returns (address);
@@ -25,9 +27,10 @@ contract CheddaAddressRegistry is Ownable {
     event MarketUpdated(address indexed newAddress, address indexed caller);
     event MarketExplorerUpdated(address indexed newAddress, address indexed caller);
     event RewardsUpdated(address indexed newAddress, address indexed caller);
-    event EntroypUpdated(address indexed newAddress, address indexed caller);
+    event EntropyUpdated(address indexed newAddress, address indexed caller);
     event MintPolicyUpdated(address indexed newAddress, address indexed caller);
     event GovernorUpdated(address indexed newAddress, address indexed caller);
+    event CheddaNFTUpdated(address indexed newAddress, address indexed caller);
 
     address public cheddaXP;
     address public dappStore;
@@ -38,6 +41,7 @@ contract CheddaAddressRegistry is Ownable {
     address public mintPolicy;
     address public entropy;
     address public rewards;
+    address public cheddaNFT;
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;
@@ -81,6 +85,11 @@ contract CheddaAddressRegistry is Ownable {
 
     function setEntropy(address entropyAddress) external onlyOwner() {
         entropy = entropyAddress;
-        emit EntroypUpdated(entropyAddress, _msgSender());
+        emit EntropyUpdated(entropyAddress, _msgSender());
+    }
+
+    function setCheddaNFT(address nftAddress) external onlyOwner() {
+        cheddaNFT = nftAddress;
+        emit CheddaNFTUpdated(nftAddress, _msgSender());
     }
 }

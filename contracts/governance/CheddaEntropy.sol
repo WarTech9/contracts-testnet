@@ -13,7 +13,7 @@ contract CheddaEntropy {
         return currentEntropy;
     }
 
-    function randomNumber() public view returns (uint256) {
-        return uint(currentEntropy);
+    function randomNumber(uint256 max) public view returns (uint256) {
+        return uint(currentEntropy) % max;
     }
 }

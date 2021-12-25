@@ -133,6 +133,10 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         pointsPerAction[action] = points;
     }
 
+    function claimPrize() public {
+        
+    }
+
     function rank(uint256 position) public pure returns (Rank) {
         if (position < RANK_UNDERBOSS) {
             return Rank.Underboss;

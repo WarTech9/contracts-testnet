@@ -7,7 +7,7 @@ interface NFTListingPolicy {
     function canList(address _tokenAddress) external returns (bool);
 }
 
-contract CheddaNFTListingPolicy is Ownable, NFTListingPolicy {
+contract MarketNFTListingPolicy is Ownable, NFTListingPolicy {
 
     mapping(address => bool) public allowed;
 

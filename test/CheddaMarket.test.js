@@ -5,7 +5,7 @@ const { ethers } = require("hardhat");
 let CheddaMarket;
 let market;
 let explorer;
-let CheddaNFT;
+let MarketNFT;
 let nft;
 let feeRecipient;
 let tokenRecipient;
@@ -23,8 +23,8 @@ beforeEach(async function () {
   market = await CheddaMarket.deploy();
   await market.deployed();
 
-  CheddaNFT = await ethers.getContractFactory("CheddaNFT");
-  nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI);
+  MarketNFT = await ethers.getContractFactory("MarketNFT");
+  nft = await MarketNFT.deploy(mintFee, feeRecipient.address, "Chedda NFT", "CNFT", metadataURI);
   await nft.deployed();
 
   CheddaMarketExplorer = await ethers.getContractFactory("CheddaMarketExplorer");

@@ -4,10 +4,10 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CheddaMarket.sol";
-import "../chedda/CheddaRewards.sol";
-import "./CheddaNFT.sol";
+import "../rewards/CheddaRewards.sol";
 import "../common/CheddaAddressRegistry.sol";
+import "./CheddaMarket.sol";
+import "./MarketNFT.sol";
 
 // market explorer
 contract CheddaMarketExplorer is Ownable {
@@ -359,9 +359,9 @@ contract CheddaMarketExplorer is Ownable {
         allItems.push(item);
         if (!collections[nftContract].exists) {
             string memory metadatURI = "";
-            // todo: fix the _isCheddaNFT check
-            // if (_isCheddaNFT(nftContract)) {
-            ICheddaNFT nftMetadata = ICheddaNFT(nftContract);
+            // todo: fix the _isMarketNFT check
+            // if (_isMarketNFT(nftContract)) {
+            IMarketNFT nftMetadata = IMarketNFT(nftContract);
             metadatURI = nftMetadata.metadataURI();
             // }
             collections[nftContract] = Collection(
@@ -493,9 +493,9 @@ contract CheddaMarketExplorer is Ownable {
         });
     }
 
-    function _isCheddaNFT(address nftContract) internal view returns (bool) {
+    function _isMarketNFT(address nftContract) internal view returns (bool) {
         return (
-            ICheddaNFT(nftContract).supportsInterface(INTERFACE_ID_ICHEDDA_NFT)
+            IMarketNFT(nftContract).supportsInterface(INTERFACE_ID_ICHEDDA_NFT)
         );
     }
 }

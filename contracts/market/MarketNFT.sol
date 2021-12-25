@@ -10,13 +10,13 @@ import "@openzeppelin/contracts/interfaces/IERC165.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./IMintPolicy.sol";
 
-interface ICheddaNFT is IERC721 {
+interface IMarketNFT is IERC721 {
     /**
      * @dev Returns the URI containing the token metadata.
      */
     function metadataURI() external view returns (string memory);
 }
-contract CheddaNFT is ICheddaNFT, ERC721Enumerable, Ownable {
+contract MarketNFT is IMarketNFT, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter internal _tokenIds;
 

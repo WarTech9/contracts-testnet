@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CheddaNFT.sol";
+import "./MarketNFT.sol";
 
-contract CheddaWhitelistedNFT is CheddaNFT {
+contract CheddaWhitelistedNFT is MarketNFT {
     mapping(address => bool) public whitelisted;
     mapping(address => bool) public claimed;
 
@@ -15,7 +15,7 @@ contract CheddaWhitelistedNFT is CheddaNFT {
         string memory name,
         string memory symbol,
         string memory metadataURI
-    ) CheddaNFT(_mintFee, _feeReceipient, name, symbol, metadataURI) {
+    ) MarketNFT(_mintFee, _feeReceipient, name, symbol, metadataURI) {
         _createWhitelist(whitelist);
     }
 
