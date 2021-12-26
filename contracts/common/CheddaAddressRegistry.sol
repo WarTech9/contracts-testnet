@@ -33,6 +33,7 @@ contract CheddaAddressRegistry is Ownable {
     event CheddaNFTUpdated(address indexed newAddress, address indexed caller);
 
     address public cheddaXP;
+    address public cheddaNFT;
     address public dappStore;
     address public market;
     address public dappStoreExplorer;
@@ -41,16 +42,15 @@ contract CheddaAddressRegistry is Ownable {
     address public mintPolicy;
     address public entropy;
     address public rewards;
-    address public cheddaNFT;
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;
         emit CheddaXPUpdated(xp, _msgSender());
     }
 
-    function setRewards(address rewardsAddress) external onlyOwner() {
-        rewards = rewardsAddress;
-        emit RewardsUpdated(rewardsAddress, _msgSender());
+    function setCheddaNFT(address nftAddress) external onlyOwner() {
+        cheddaNFT = nftAddress;
+        emit CheddaNFTUpdated(nftAddress, _msgSender());
     }
 
     function setDappStore(address storeAddress) external onlyOwner() {
@@ -88,8 +88,8 @@ contract CheddaAddressRegistry is Ownable {
         emit EntropyUpdated(entropyAddress, _msgSender());
     }
 
-    function setCheddaNFT(address nftAddress) external onlyOwner() {
-        cheddaNFT = nftAddress;
-        emit CheddaNFTUpdated(nftAddress, _msgSender());
+    function setRewards(address rewardsAddress) external onlyOwner() {
+        rewards = rewardsAddress;
+        emit RewardsUpdated(rewardsAddress, _msgSender());
     }
 }

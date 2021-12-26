@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../common/CheddaAddressRegistry.sol";
+import "./CheddaEpoch.sol";
+import "./CheddaNFT.sol";
 import "./CheddaXP.sol";
 import "hardhat/console.sol";
 
@@ -17,68 +19,39 @@ enum Actions {
     Other
 }
 
-enum Rank {
-    None,
-    Associate,
-    Soldier,
-    Capo,
-    Consigliere,
-    Underboss,
-    Boss,
-    Godfather
-}
-
 interface ICheddaRewards {
    function issueRewards(Actions action, address user) external;
 }
 
+/// @title CheddaRewards. 
+/// @notice Manages CheddaXP and Chedda NFT rewards on the platform.
 contract CheddaRewards is Ownable, ICheddaRewards {
+
+    event RewardsIssued(Actions indexed a, uint256 indexed amount, address indexed user);
+    event RewardsSlashed(uint256 amount, address indexed user);
 
     // Rewards issued in epoch
     struct UserRewards {
         address user;
         uint256 points;
-        Rank rank;
+        CheddaNFT.Rank rank;
     }
-
-    struct Account {
-        uint256 entered;
-        uint256 earned;
-    }
-
-    struct Epoch {
-        uint256 start;
-        uint256 end;
-        mapping (address => Account) accounts;
-        
-    }
-
-    event RewardsIssued(Actions indexed a, uint256 indexed amount, address indexed user);
-    event RewardsSlashed(uint256 amount, address indexed user);
 
     CheddaAddressRegistry public registry;
 
+    address[] public epochs;
     mapping(Actions => uint256) public pointsPerAction;
-    mapping(address => uint256) public pointsPerUser;
 
-    // address => bool indicating if this user is currently on the leaderboard.
-    mapping(address => bool) public userOnLeaderboard;
-
-    // list of addresses on the leaderboard
-    // this list is stored unsorted
-    address[] public board;
-
-    uint8 public BOARD_LENGTH = 100;
+    uint8 public boardLength = 100;
     uint256 public minimumPointsForReward = 0;
 
-    uint256 public POINTS_PER_DOWNVOTE = 1;
-    uint256 public POINTS_PER_UPVOTE = 1;
-    uint256 public POINTS_PER_LIKE = 10;
-    uint256 public POINTS_PER_DISLIKE = 10;
-    uint256 public POINTS_PER_RATE = 10;
-    uint256 public POINTS_PER_REVIEW = 30;
-    uint256 public POINTS_PER_VOTE = 50;
-    uint256 public pointsPerOther = 1;
+    uint256 public constant POINTS_PER_DOWNVOTE = 1;
+    uint256 public constant POINTS_PER_UPVOTE = 1;
+    uint256 public constant POINTS_PER_LIKE = 10;
+    uint256 public constant POINTS_PER_DISLIKE = 10;
+    uint256 public constant POINTS_PER_RATE = 10;
+    uint256 public constant POINTS_PER_REVIEW = 30;
+    uint256 public constant POINTS_PER_VOTE = 50;
 
     uint256 public constant RANK_GODFATHER = 0;
     uint256 public constant RANK_BOSS = 0;
@@ -88,7 +61,6 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     uint256 public constant RANK_SOLDIER = 20;
     uint256 public constant RANK_ASSOCIATE = 100;
 
-    uint8 public constant MAX_BOARD_LENGTH = 100;
     int256 public slashPerDownvote = -2;
 
     modifier onlyExplorer() {
@@ -114,191 +86,181 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         registry = CheddaAddressRegistry(registryAddress);
     }
 
+    /// @notice Returns current leaderboard. If an poch is not currently in progress,
+    /// returns the leaderboard of the previous epoch
+    /// @return UserRewards sorted list of users, points and max reward.
     function leaderboard() external view returns(UserRewards[] memory) {
-        // return leaderboard
-        address[] memory sortedAddresses = sortAddresses(board);
+        address epoch = currentEpoch();
+        if (epoch == address(0)) {
+            epoch = lastEpoch();
+        }
+        if (epoch == address(0)) {
+            return new UserRewards[](0);
+        }
+
+        AddressWithPoints[] memory sortedAddresses = CheddaEpoch(epoch).sortedBoard();
         UserRewards[] memory rewards = new UserRewards[](sortedAddresses.length);
         for (uint256 i = 0; i < sortedAddresses.length; i++) {
             rewards[i] = UserRewards(
-                sortedAddresses[i], 
-                pointsPerUser[sortedAddresses[i]],
+                sortedAddresses[i].user, 
+                sortedAddresses[i].points,
                 rank(i)
                 );
         }
         return rewards;
     }
     
-    function setRewards(Actions action, uint256 points) public onlyOwner {
+    /// @notice Sets the number of points to reward per action
+    /// @param action action to set points for
+    /// @param points number of points
+    function setRewards(Actions action, uint256 points) public onlyOwner () {
         require(points != 0, "Points can not be 0");
         pointsPerAction[action] = points;
     }
 
-    function claimPrize() public {
-        
-    }
-
-    function rank(uint256 position) public pure returns (Rank) {
-        if (position < RANK_UNDERBOSS) {
-            return Rank.Underboss;
-        } else if (position < RANK_CONSIGLIERE) {
-            return Rank.Consigliere;
-        } else if (position < RANK_CAPOREGIME) {
-            return Rank.Consigliere;
-        } else if (position < RANK_SOLDIER) {
-            return Rank.Consigliere;
-        } else if (position < RANK_ASSOCIATE) {
-            return Rank.Consigliere;
-        } 
-        return Rank.None;
-    }
-
+    /// @notice Rewards user for action performed.
+    /// @dev Can only be called from MarketExplorer or DappstoreExplorer
+    /// @param action Action user performed. Is used to determine number of XP to issue.
+    /// @param user Address of user that performed action.
     function issueRewards(Actions action, address user)
         public
         override
+        onlyExplorer()
     {
         require(user != address(0), "Address can not be 0");
         uint256 amount = pointsPerAction[action];
         require(amount != 0, "Amount can not be 0");
-        pointsPerUser[user] += amount;
         CheddaXP(registry.cheddaXP()).mint(amount, user);
-        _updateBoard(user);
+        address epoch = currentEpoch();
+        if (epoch != address(0)) {
+            CheddaEpoch(epoch).addPoints(amount, user);
+        }
 
         emit RewardsIssued(action, amount, user);
     }
 
-    function _slashRewards(address user) internal {
+    /// @notice Slashes user rewards for bad behaviour. For example, this occurs when a users review is downvoted
+    /// multiple times indicating possible spam or otherwise bad review.
+    /// @dev Can only be called from MarketExplorer or DappstoreExplorer
+    /// @param user Address of user that performed action.
+    function slashRewards(address user) public onlyExplorer() {
         uint256 amount = pointsPerAction[Actions.Downvote];
        CheddaXP(registry.cheddaXP()).slash(amount, user);
+       address epoch = currentEpoch();
+       if (epoch != address(0)) {
+           CheddaEpoch(epoch).slashPoints(amount, user);
+       }
         
        emit RewardsSlashed(amount, user);
     }
 
-    // Leaderboard
-    // Leaderboard implementation resultsin O(1) inserts as reshuffling board is not 
-    // required for each insert (highly costly operation). The drawback is O(n) reads
-    // which is not born by the user since read operations are free. A caching mechanism
-    // can be implementd to rectify this drawback.
-    function _updateBoard(address user) internal {
-        if (_userExists(user)) {
-            return;
+    /// @notice Creates a new epoch
+    /// @dev Explain to a developer any extra details
+    /// @param start must be > block.timestamp. Must be after all existing epochs
+    /// @param duration must be >= 7 days and <= 366 days
+    function createEpoch(string calldata name, uint256 start, uint256 duration) public onlyOwner() {
+        require(start > block.timestamp, "CR: Start must be future");
+        require(duration >= 7 days && duration <= 366 days, "CR: Invalid duration");
+        require(!_epochOverlaps(start), "CR: Overlap found");
+        require(_startsAfterAllEpochs(start), "CR: Must be after epochs");
+
+        uint256 end = start + duration;
+        CheddaEpoch epoch = new CheddaEpoch(name, start, end, boardLength);
+        epochs.push(address(epoch));
+    }
+
+    /// @notice Claims a users prize for the given epoch
+    /// @dev Epoch must have ended. Reverts if user is not eligible to claim prize in epoch.
+    /// @param epochIndex The poch to claim prize for. Must be > 0 and < epochs.length
+    function claimPrize(uint256 epochIndex) public {
+        require(epochIndex < epochs.length, "CR: Invalid index");
+        CheddaEpoch epoch = CheddaEpoch(epochs[epochIndex]);
+        address caller = _msgSender();
+        require(epoch.hasEnded(), "CR: Epoch has not ended");
+        int position = epoch.position(caller);
+        require(position >= 0, "CR: No prize");
+        CheddaNFT.Rank nftRank = rank(uint256(position));
+        CheddaNFT nft = CheddaNFT(registry.cheddaNFT());
+        if (!nft.canGraduateToRank(caller, uint256(nftRank))) {
+            nftRank = CheddaNFT.Rank(nft.attainableRank(caller));
         }
+        if (nftRank != CheddaNFT.Rank.None && !epoch.hasClaimedPrize(caller)) {
+            epoch.claimPrize(caller);
+            nft.mint(caller, uint256(nftRank), 1, "");
+        } else {
+            revert("CR: No Prize");
+        }
+    }
 
-        // board is not full, can just add
-        if (board.length < MAX_BOARD_LENGTH) {
-            board.push(user);
-            userOnLeaderboard[user] = true;
-
-        // Board is full, check if current user should be added to board
-        // 1. find current minimum points
-        // 2. compare with incoming value
-        // 3. If lower, update board accordingly
-        } else if (pointsPerUser[user] > minimumPointsForReward) {
-            uint8 minIndex = _findMinIndex();
-            uint256 pointsForMinUser = pointsPerUser[board[minIndex]]; 
-            if (pointsForMinUser < pointsPerUser[user]) {
-                address userToRemove = board[minIndex];
-                userOnLeaderboard[userToRemove] = false;
-                userOnLeaderboard[user] = true;
-                board[minIndex] = user;
-                minimumPointsForReward = pointsPerUser[user];
+    function currentEpoch() public view returns (address) {
+        for (uint256 i = 0; i < epochs.length; i++) {
+            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            if (epoch.isCurrent()) {
+                return epochs[i];
             }
         }
+        return address(0);
     }
 
-    function _userExists(address user) internal view returns (bool) {
-        return userOnLeaderboard[user];
-    }
+    function lastEpoch() public view returns (address) {
+        if (epochs.length == 0) {
+            return address(0);
+        }
 
-    function _findMinIndex() internal view returns (uint8) {
-        uint256 min = pointsPerUser[board[0]];
-        uint8 minIndex = 0;
-        for (uint8 i = 0; i < board.length; i++) {
-            if (pointsPerUser[board[i]] < min) {
-                min = pointsPerUser[board[i]];
-                minIndex = i;
+        for (uint256 i = epochs.length - 1; i >= 0; i--) {
+            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            if (epoch.end() < block.timestamp) {
+                return epochs[i];
             }
         }
-        return minIndex;
+        return address(0);
     }
 
-    function sort(uint[] memory data) internal view returns(uint[] memory) {
-        if (data.length > 0) {
-            quickSort(data, int(0), int(data.length - 1));
-        }
-        return data;
-    }
-
-    function sortRewards(UserRewards[] memory data) internal view returns(UserRewards[] memory) {
-        if (data.length > 0) {
-            quickSortRewards(data, int(0), int(data.length - 1));
-        }
-       return data;
-    }
-
-    function sortAddresses(address[] memory data) internal view returns(address[] memory) {
-        if (data.length > 0) {
-            quickSortAddresses(data, int(0), int(data.length - 1));
-        }
-        return data;
-    }
-    
-    function quickSort(uint[] memory arr, int left, int right) internal view {
-        int i = left;
-        int j = right;
-        if(i>=j) return;
-        uint pivot = arr[uint(left + (right - left) / 2)];
-        while (i <= j) {
-            while (arr[uint(i)] < pivot) i++;
-            while (pivot < arr[uint(j)]) j--;
-            if (i <= j) {
-                (arr[uint(i)], arr[uint(j)]) = (arr[uint(j)], arr[uint(i)]);
-                i++;
-                j--;
+    function nextEpoch() public view returns (address) {
+        for (uint256 i = 0; i < epochs.length; i++) {
+            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            if (epoch.start() > block.timestamp) {
+                return epochs[i];
             }
         }
-        if (left < j)
-            quickSort(arr, left, j);
-        if (i < right)
-            quickSort(arr, i, right);
+        return address(0);
     }
 
-    function quickSortRewards(UserRewards[] memory arr, int left, int right) internal view {
-        int i = left;
-        int j = right;
-        if(i>=j) return;
-        uint pivot = arr[uint(left + (right - left) / 2)].points;
-        while (i <= j) {
-            while (arr[uint(i)].points < pivot) i++;
-            while (pivot < arr[uint(j)].points) j--;
-            if (i <= j) {
-                (arr[uint(i)], arr[uint(j)]) = (arr[uint(j)], arr[uint(i)]);
-                i++;
-                j--;
+    function _startsAfterAllEpochs(uint256 start) internal view returns (bool) {
+        for (uint256 i = 0; i < epochs.length; i++) {
+            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            if (start <= epoch.start() || start <= epoch.end()) {
+                return false;
             }
         }
-        if (left < j)
-            quickSortRewards(arr, left, j);
-        if (i < right)
-            quickSortRewards(arr, i, right);
+        return true;
     }
 
-    function quickSortAddresses(address[] memory arr, int left, int right) internal view {
-        int i = left;
-        int j = right;
-        if(i>=j) return;
-        uint pivot = pointsPerUser[arr[uint(left + (right - left) / 2)]];
-        while (i <= j) {
-            while (pointsPerUser[arr[uint(i)]] > pivot) i++;
-            while (pivot > pointsPerUser[arr[uint(j)]]) j--;
-            if (i <= j) {
-                (arr[uint(i)], arr[uint(j)]) = (arr[uint(j)], arr[uint(i)]);
-                i++;
-                j--;
+    function _epochOverlaps(uint256 start) internal view returns (bool) {
+        for (uint256 i = 0; i < epochs.length; i++) {
+            CheddaEpoch epoch = CheddaEpoch(epochs[i]);     
+            if (start >= epoch.start() && start <= epoch.end()) {
+                return true;
             }
         }
-        if (left < j)
-            quickSortAddresses(arr, left, j);
-        if (i < right)
-            quickSortAddresses(arr, i, right);
+        return false;
     }
+
+    function rank(uint256 position) public pure returns (CheddaNFT.Rank) {
+        if (position == RANK_BOSS) {
+            return CheddaNFT.Rank.Boss;
+        } else if (position < RANK_UNDERBOSS) {
+            return CheddaNFT.Rank.Underboss;
+        } else if (position < RANK_CONSIGLIERE) {
+            return CheddaNFT.Rank.Consigliere;
+        } else if (position < RANK_CAPOREGIME) {
+            return CheddaNFT.Rank.Consigliere;
+        } else if (position < RANK_SOLDIER) {
+            return CheddaNFT.Rank.Consigliere;
+        } else if (position < RANK_ASSOCIATE) {
+            return CheddaNFT.Rank.Consigliere;
+        } 
+        return CheddaNFT.Rank.None;
+    }
+
 }
