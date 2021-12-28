@@ -38,7 +38,8 @@ contract CheddaNFT is ERC1155, Ownable {
         registry = ICheddaAddressRegistry(registryAddress);
         emit RegistryUpdated(_msgSender(), registryAddress);
     }
-        /**
+
+    /**
      * @dev Creates `amount` tokens of token type `id`, and assigns them to `account`.
      *
      * Emits a {TransferSingle} event.

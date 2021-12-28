@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../common/CheddaAddressRegistry.sol";
-import "./CheddaEpoch.sol";
+import "./CheddaCampaign.sol";
 import "./CheddaNFT.sol";
 import "./CheddaXP.sol";
 import "hardhat/console.sol";
@@ -30,7 +30,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     event RewardsIssued(Actions indexed a, uint256 indexed amount, address indexed user);
     event RewardsSlashed(uint256 amount, address indexed user);
 
-    // Rewards issued in epoch
+    // Rewards issued in campaign
     struct UserRewards {
         address user;
         uint256 points;
@@ -98,7 +98,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
             return new UserRewards[](0);
         }
 
-        AddressWithPoints[] memory sortedAddresses = CheddaEpoch(epoch).sortedBoard();
+        AddressWithPoints[] memory sortedAddresses = CheddaCampaign(epoch).sortedBoard();
         UserRewards[] memory rewards = new UserRewards[](sortedAddresses.length);
         for (uint256 i = 0; i < sortedAddresses.length; i++) {
             rewards[i] = UserRewards(
@@ -133,7 +133,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         CheddaXP(registry.cheddaXP()).mint(amount, user);
         address epoch = currentEpoch();
         if (epoch != address(0)) {
-            CheddaEpoch(epoch).addPoints(amount, user);
+            CheddaCampaign(epoch).addPoints(amount, user);
         }
 
         emit RewardsIssued(action, amount, user);
@@ -148,7 +148,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
        CheddaXP(registry.cheddaXP()).slash(amount, user);
        address epoch = currentEpoch();
        if (epoch != address(0)) {
-           CheddaEpoch(epoch).slashPoints(amount, user);
+           CheddaCampaign(epoch).slashPoints(amount, user);
        }
         
        emit RewardsSlashed(amount, user);
@@ -158,14 +158,19 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     /// @dev Explain to a developer any extra details
     /// @param start must be > block.timestamp. Must be after all existing epochs
     /// @param duration must be >= 7 days and <= 366 days
-    function createEpoch(string calldata name, uint256 start, uint256 duration) public onlyOwner() {
+    function createCampaign(
+        string calldata name, 
+        uint256 start, 
+        uint256 duration, 
+        address verificationContract,
+        address distributionContract) public onlyOwner() {
         require(start > block.timestamp, "CR: Start must be future");
         require(duration >= 7 days && duration <= 366 days, "CR: Invalid duration");
         require(!_epochOverlaps(start), "CR: Overlap found");
         require(_startsAfterAllEpochs(start), "CR: Must be after epochs");
 
         uint256 end = start + duration;
-        CheddaEpoch epoch = new CheddaEpoch(name, start, end, boardLength);
+        CheddaCampaign epoch = new CheddaCampaign(name, start, end, verificationContract, distributionContract);
         epochs.push(address(epoch));
     }
 
@@ -174,7 +179,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     /// @param epochIndex The poch to claim prize for. Must be > 0 and < epochs.length
     function claimPrize(uint256 epochIndex) public {
         require(epochIndex < epochs.length, "CR: Invalid index");
-        CheddaEpoch epoch = CheddaEpoch(epochs[epochIndex]);
+        CheddaCampaign epoch = CheddaCampaign(epochs[epochIndex]);
         address caller = _msgSender();
         require(epoch.hasEnded(), "CR: Epoch has not ended");
         int position = epoch.position(caller);
@@ -194,7 +199,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
 
     function currentEpoch() public view returns (address) {
         for (uint256 i = 0; i < epochs.length; i++) {
-            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            CheddaCampaign epoch = CheddaCampaign(epochs[i]);
             if (epoch.isCurrent()) {
                 return epochs[i];
             }
@@ -208,7 +213,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         }
 
         for (uint256 i = epochs.length - 1; i >= 0; i--) {
-            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            CheddaCampaign epoch = CheddaCampaign(epochs[i]);
             if (epoch.end() < block.timestamp) {
                 return epochs[i];
             }
@@ -218,7 +223,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
 
     function nextEpoch() public view returns (address) {
         for (uint256 i = 0; i < epochs.length; i++) {
-            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            CheddaCampaign epoch = CheddaCampaign(epochs[i]);
             if (epoch.start() > block.timestamp) {
                 return epochs[i];
             }
@@ -228,7 +233,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
 
     function _startsAfterAllEpochs(uint256 start) internal view returns (bool) {
         for (uint256 i = 0; i < epochs.length; i++) {
-            CheddaEpoch epoch = CheddaEpoch(epochs[i]);
+            CheddaCampaign epoch = CheddaCampaign(epochs[i]);
             if (start <= epoch.start() || start <= epoch.end()) {
                 return false;
             }
@@ -238,7 +243,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
 
     function _epochOverlaps(uint256 start) internal view returns (bool) {
         for (uint256 i = 0; i < epochs.length; i++) {
-            CheddaEpoch epoch = CheddaEpoch(epochs[i]);     
+            CheddaCampaign epoch = CheddaCampaign(epochs[i]);     
             if (start >= epoch.start() && start <= epoch.end()) {
                 return true;
             }
