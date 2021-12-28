@@ -42,7 +42,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     address[] public epochs;
     mapping(Actions => uint256) public pointsPerAction;
 
-    uint8 public boardLength = 100;
+    uint8 public boardSize = 100;
     uint256 public minimumPointsForReward = 0;
 
     uint256 public constant POINTS_PER_DOWNVOTE = 1;
@@ -170,7 +170,14 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         require(_startsAfterAllEpochs(start), "CR: Must be after epochs");
 
         uint256 end = start + duration;
-        CheddaCampaign epoch = new CheddaCampaign(name, start, end, verificationContract, distributionContract);
+        CheddaCampaign epoch = new CheddaCampaign(
+            name, 
+            start, 
+            end, 
+            boardSize, 
+            verificationContract, 
+            distributionContract
+        );
         epochs.push(address(epoch));
     }
 
