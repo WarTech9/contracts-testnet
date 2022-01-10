@@ -45,13 +45,13 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     uint8 public boardSize = 100;
     uint256 public minimumPointsForReward = 0;
 
-    uint256 public constant POINTS_PER_DOWNVOTE = 1;
-    uint256 public constant POINTS_PER_UPVOTE = 1;
+    uint256 public constant POINTS_PER_DOWNVOTE = 2;
+    uint256 public constant POINTS_PER_UPVOTE = 2;
     uint256 public constant POINTS_PER_LIKE = 10;
     uint256 public constant POINTS_PER_DISLIKE = 10;
     uint256 public constant POINTS_PER_RATE = 10;
-    uint256 public constant POINTS_PER_REVIEW = 30;
-    uint256 public constant POINTS_PER_VOTE = 50;
+    uint256 public constant POINTS_PER_REVIEW = 20;
+    uint256 public constant POINTS_PER_VOTE = 30;
 
     uint256 public constant RANK_GODFATHER = 0;
     uint256 public constant RANK_BOSS = 0;
@@ -157,7 +157,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     /// @notice Creates a new epoch
     /// @dev Explain to a developer any extra details
     /// @param start must be > block.timestamp. Must be after all existing epochs
-    /// @param duration must be >= 7 days and <= 366 days
+    /// @param duration must be >= 1 days and <= 366 days
     function createCampaign(
         string calldata name, 
         uint256 start, 
@@ -165,7 +165,7 @@ contract CheddaRewards is Ownable, ICheddaRewards {
         address verificationContract,
         address distributionContract) public onlyOwner() {
         require(start > block.timestamp, "CR: Start must be future");
-        require(duration >= 7 days && duration <= 366 days, "CR: Invalid duration");
+        require(duration >= 1 days && duration <= 366 days, "CR: Invalid duration");
         require(!_epochOverlaps(start), "CR: Overlap found");
         require(_startsAfterAllEpochs(start), "CR: Must be after epochs");
 
