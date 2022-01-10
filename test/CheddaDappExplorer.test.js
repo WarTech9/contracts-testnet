@@ -94,29 +94,23 @@ describe("CheddaDappExplorer", function () {
     expect(reviews.length).to.equal(0);
     expect(averageRating).to.equal(0);
 
-    await explorer.addReview(dappAddress, "http://myreview.com", 500);
+    const reviewUrl = "http://myreview.com"
+    await explorer.addReview(dappAddress, reviewUrl, 500);
     reviews = await explorer.getReviews(dappAddress);
     averageRating = await explorer.averageRating(dappAddress)
+
     expect(reviews.length).to.equal(1);
+    expect(reviews[0].contentURI).to.equal(reviewUrl)
     expect(averageRating).to.equal(500);
   });
 
   it("Can issue rewards", async function() {
         let recipient = "0x1cbd3b2770909d4e10f157cabc84c7264073c9ec"
 
-        await rewards.issueRewards(1, recipient)
+        // await rewards.issueRewards(1, recipient)
         let rewardsForAction = await rewards.pointsPerAction(1)
 
-        console.log('rewardsForAction = ', rewardsForAction)
         let balance = await xp.balanceOf(recipient)
-        let totalSupply = await xp.totalSupply()
-        let numberOfRatings = await explorer.numberOfRatings(dappAddress)
-
-        expect(balance.toString()).to.equal(rewardsForAction.toString())
-        expect(numberOfRatings).to.equal(BigNumber.from(0))
-
-        console.log('balance is ', balance)
-        console.log('totalSupply is ', totalSupply)
 
         await store.addDapp(
           dappName,
@@ -129,6 +123,8 @@ describe("CheddaDappExplorer", function () {
         balance = await xp.balanceOf(signer1.address)
         expect(balance).to.equal(BigNumber.from(0))
 
+        let numberOfRatings = await explorer.numberOfRatings(dappAddress)
+        
         await explorer.connect(signer1).addRating(dappAddress, 500);
         numberOfRatings = await explorer.numberOfRatings(dappAddress)
         averageRating = await explorer.averageRating(dappAddress);

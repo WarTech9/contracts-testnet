@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./verification/ICheddaVerification.sol";
+import "./verification/ICheddaVerifier.sol";
 import "./distribution/ICheddaDistribution.sol";
 
 struct AddressWithPoints {
@@ -46,7 +46,7 @@ contract CheddaCampaign is Ownable {
 
     // address => bool indicating if this user is currently on the leaderboard.
     mapping(address => bool) public userOnLeaderboard;
-    ICheddaVerification public verificationContract;
+    ICheddaVerifier public verificationContract;
     ICheddaDistribution public distribtionContract;
 
     /// @notice Creates a new campaign
