@@ -1,7 +1,9 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
-const marketAddress = require("../addresses/market.json")
-const explorerAddress = require("../addresses/market-explorer.json")
+const networkName = hre.network.name
+
+const marketAddress = require(`../addresses/${networkName}/market.json`)
+const explorerAddress = require(`../addresses/${networkName}/market-explorer.json`)
 
 const fs = require('fs');
 
@@ -23,7 +25,7 @@ let nft
 let explorer
 
 const startIndex = 1
-const endIndex = 100
+const endIndex = 10
 let feeRecipient;
 let tokenRecipient;
 const mintFee = ethers.utils.parseUnits("0.001", "ether");
@@ -46,8 +48,8 @@ async function initialize() {
     explorer = await CheddaMarketExplorer.attach(explorerAddress.marketExplorer)
     console.log('CheddaMarketExplorer attached to address: ', explorer.address)
 
-    const CheddaNFT = await hre.ethers.getContractFactory("CheddaNFT")
-    nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
+    const MarketNFT = await hre.ethers.getContractFactory("MarketNFT")
+    nft = await MarketNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
     await nft.deployed();
     console.log(`Deployed NFT = ${nft}`)
     return nft
@@ -63,9 +65,11 @@ async function listCollection(nft) {
         let metadataURI = getTokenURI(i)
         let tokenId = await mintNFT(tokenRecipient.address, metadataURI, mintFee)
         console.log(`*** Minted tokenID: ${JSON.stringify(tokenId)}`)
+        let addTx = await addNFT(nft.address, i)
+        console.log('added NFT with tx = ', JSON.stringify(addTx))
         let tx = await listNFT(nft.address, i)
         txs.push(tx)
-        console.log(`*** Listed ${tokenId} => ${tx}`)
+        console.log(`*** Listed with tx ${JSON.stringify(tokenId)}`)
     }
     let allItems = await explorer.getAllItems()
     console.log('allItems = ', allItems)
@@ -75,6 +79,13 @@ async function listCollection(nft) {
 async function mintNFT(recipientAddress, tokenURI, mintFee) {
     tokenId = await nft.mint(recipientAddress, tokenURI, { value: mintFee });
     return tokenId;
+}
+
+async function addNFT(tokenAddress, tokenId) {
+    let tx = await market
+    .connect(tokenRecipient)
+    .addItemToMarket(tokenAddress, tokenId);
+    return tx 
 }
 
 async function listNFT(tokenAddress, tokenId) {

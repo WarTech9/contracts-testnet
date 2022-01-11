@@ -1,7 +1,9 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
-const dapplist = require("../dapps/dapplist.json")
-const addresses = require("../addresses/dappstore.json")
+const networkName = hre.network.name
+
+const dapplist = require(`../dapps/${networkName}/_dapplist.json`);
+const addresses = require(`../addresses/${networkName}/dappstore.json`)
 let dappStore
 
 async function initialize() {
@@ -23,7 +25,7 @@ async function save() {
 }
 
 async function readDappList() {
-    let polygonDapps = dapplist.polygon
+    let polygonDapps = dapplist[networkName]
     for (const dapp of polygonDapps) {
         console.log("Dapp => ", dapp)
         let tx = await dappStore.addDapp(

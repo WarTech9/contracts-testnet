@@ -1,7 +1,9 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
-const fs = require('fs');
-const addresses = require("../../addresses/registry.json")
+const fs = require('fs')
+const networkName = hre.network.name
+
+const addresses = require(`../../addresses/${networkName}/registry.json`)
 
 let dappStore
 let registry
@@ -30,7 +32,7 @@ async function save() {
 
   `
   let data = JSON.stringify(config)
-  let filename = `./addresses/dappstore.json`
+  let filename = `./addresses/${networkName}/dappstore.json`
   fs.writeFileSync(filename, JSON.parse(data))
   console.log(`Addresses written to file: ${filename}`)
 }

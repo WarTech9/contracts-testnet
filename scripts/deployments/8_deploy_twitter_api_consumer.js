@@ -1,6 +1,7 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
 const fs = require('fs');
+const networkName = hre.network.name
 
 const linkAddress = "0x326c977e6efc84e512bb9c30f76e30c160ed06fb"
 const oracle = "0xc8D925525CA8759812d0c299B90247917d4d4b7C"
@@ -15,21 +16,19 @@ async function main() {
   consumer = await TwitterAPIConsumer.deploy(linkAddress, oracle, jobIdBytes, fee.toString());
 
   console.log("TwitterAPIConsumer deployed to:", consumer.address);
+  console.log('network name = ', networkName)
   await save()
 }
 
 async function save() {
-  const provider = new ethers.providers.JsonRpcProvider();
-  const network = await provider.getNetwork()
   let config = `
   {
     "consumer": "${consumer.address}"
   }
 
   `
-  console.log("network is: ", network)
   let data = JSON.stringify(config)
-  let filename = `./addresses/consumer.json`
+  let filename = `./addresses/${networkName}/consumer.json`
   fs.writeFileSync(filename, JSON.parse(data))
   console.log(`Addresses written to file: ${filename}`)
 }

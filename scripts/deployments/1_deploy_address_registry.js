@@ -1,6 +1,7 @@
 const hre = require("hardhat");
 const ethers = require("ethers")
 const fs = require('fs');
+const networkName = hre.network.name
 
 let registry
 
@@ -24,7 +25,7 @@ async function save() {
   `
   console.log("network is: ", network)
   let data = JSON.stringify(config)
-  let filename = `./addresses/registry.json`
+  let filename = `./addresses/${networkName}/registry.json`
   fs.writeFileSync(filename, JSON.parse(data))
   console.log(`Addresses written to file: ${filename}`)
 }
