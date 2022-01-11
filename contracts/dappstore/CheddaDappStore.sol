@@ -9,7 +9,7 @@ import "hardhat/console.sol";
 struct Dapp {
     uint16 index;
     string name;
-    uint8 chainID;
+    uint64 chainID;
     address contractAddress;
     string metadataURI;
     bool isFeatured;
@@ -30,7 +30,7 @@ struct DappWithRating {
 interface IStore {
     function addDapp(
         string memory name,
-        uint8 chainId,
+        uint64 chainId,
         address contractAddress,
         string memory category,
         string calldata uri
@@ -82,7 +82,7 @@ contract CheddaDappStore is Ownable, IStore {
 
     function addDapp(
         string memory name,
-        uint8 chainId,
+        uint64 chainId,
         address contractAddress,
         string memory category,
         string calldata uri
