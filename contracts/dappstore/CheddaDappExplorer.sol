@@ -34,12 +34,13 @@ interface IStoreExplorer {
 }
 
 contract CheddaDappExplorer is Ownable, IStoreExplorer {
-    event ReviewAdded(address indexed contractAddress, address indexed user);
+    event ReviewAdded(address indexed contractAddress, address indexed user, uint256 rating);
     event RatingAdded(
         address indexed contractAddress,
         address indexed user,
         uint256 rating
     );
+    event VotedOnReview(address indexed contractAddress, address indexed user, uint256 indexed reviewId, int32 vote);
 
     CheddaAddressRegistry public registry;
 
@@ -101,12 +102,12 @@ contract CheddaDappExplorer is Ownable, IStoreExplorer {
             credibility: 0,
             spamCount: 0
         });
-        this.addRating(contractAddress, rating);
+        addRating(contractAddress, rating);
         reviews[contractAddress].push(review);
         myReviews[contractAddress][_msgSender()] = reviewsCount;
 
         issueRewards(Actions.Review, _msgSender());
-        emit ReviewAdded(contractAddress, _msgSender());
+        emit ReviewAdded(contractAddress, _msgSender(), rating);
     }
 
     function getReviews(address contractAddress)
@@ -193,6 +194,8 @@ contract CheddaDappExplorer is Ownable, IStoreExplorer {
         if (reviewFound) {
             reviewVotes[_msgSender()][reviewId] = vote;
             issueRewards(vote == 1 ? Actions.Upvote: Actions.Downvote, _msgSender());
+
+            emit VotedOnReview(contractAddress, _msgSender(), reviewId, vote);
         }
     }
 
