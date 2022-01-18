@@ -157,26 +157,18 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     /// @notice Creates a new epoch
     /// @dev Explain to a developer any extra details
     /// @param start must be > block.timestamp. Must be after all existing epochs
-    /// @param duration must be >= 1 days and <= 366 days
+    /// @param end must be >= 1 days and <= 366 days
     function createCampaign(
         string calldata name, 
         uint256 start, 
-        uint256 duration, 
-        address verificationContract,
-        address distributionContract) public onlyOwner() {
-        require(start > block.timestamp, "CR: Start must be future");
-        require(duration >= 1 days && duration <= 366 days, "CR: Invalid duration");
-        require(!_epochOverlaps(start), "CR: Overlap found");
-        require(_startsAfterAllEpochs(start), "CR: Must be after epochs");
+        uint256 end) public onlyOwner() {
+        // require(start > block.timestamp && end > start, "CR: Start must be future");
 
-        uint256 end = start + duration;
         CheddaCampaign epoch = new CheddaCampaign(
             name, 
             start, 
             end, 
-            boardSize, 
-            verificationContract, 
-            distributionContract
+            boardSize
         );
         epochs.push(address(epoch));
     }
@@ -205,6 +197,9 @@ contract CheddaRewards is Ownable, ICheddaRewards {
     }
 
     function currentEpoch() public view returns (address) {
+        if (epochs.length > 0) {
+            return epochs[0];
+        }
         for (uint256 i = 0; i < epochs.length; i++) {
             CheddaCampaign epoch = CheddaCampaign(epochs[i]);
             if (epoch.isCurrent()) {

@@ -17,6 +17,10 @@ interface ICheddaAddressRegistry {
     function marketExplorer() external view returns (address);
 
     function rewards() external view returns (address);
+
+    function entropy() external view returns (address);
+
+    function drops() external view returns (address);
 }
 
 contract CheddaAddressRegistry is Ownable {
@@ -31,6 +35,7 @@ contract CheddaAddressRegistry is Ownable {
     event MintPolicyUpdated(address indexed newAddress, address indexed caller);
     event GovernorUpdated(address indexed newAddress, address indexed caller);
     event CheddaNFTUpdated(address indexed newAddress, address indexed caller);
+    event DropsUpdated(address indexed newAddress, address indexed caller);
 
     address public cheddaXP;
     address public cheddaNFT;
@@ -42,6 +47,7 @@ contract CheddaAddressRegistry is Ownable {
     address public mintPolicy;
     address public entropy;
     address public rewards;
+    address public drops;
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;
@@ -91,5 +97,10 @@ contract CheddaAddressRegistry is Ownable {
     function setRewards(address rewardsAddress) external onlyOwner() {
         rewards = rewardsAddress;
         emit RewardsUpdated(rewardsAddress, _msgSender());
+    }
+
+    function setDrops(address dropsAddress) external onlyOwner() {
+        drops = dropsAddress;
+        emit DropsUpdated(dropsAddress, _msgSender());
     }
 }

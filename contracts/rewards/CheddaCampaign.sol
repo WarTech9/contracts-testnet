@@ -56,15 +56,14 @@ contract CheddaCampaign is Ownable {
     /// @param _boardSize The size of the leaderboard. This is the number of users to keep track of.
     /// For example, if there are 1000 users participating in the campaign, but boardSize is 100, 
     /// the leaderboard only keeps track of the top 100 users.
-    constructor(string memory _name, uint256 _start, uint256 _end, uint32 _boardSize, address _verification, address _distribution) {
-        require(start > block.timestamp, "Campaign: Invalid start");
-        require(end > start, "Campaign: Invalid end");
+    constructor(string memory _name, uint256 _start, uint256 _end, uint32 _boardSize) {
+        // require(start > block.timestamp, "Campaign: Invalid start");
+        // require(end > start, "Campaign: Invalid end");
         require(_boardSize > 0 && boardSize <= 1000, "Invalid boardSize");
-        require(_verification != address(0) && _distribution != address(0) &&
-        _verification.isContract() && _distribution.isContract(),
-        "Campaign: Invalid address"
-        );
-
+        // require(_verification != address(0) && _distribution != address(0) &&
+        // _verification.isContract() && _distribution.isContract(),
+        // "Campaign: Invalid address"
+        // );
 
         name = _name;
         start = _start;
@@ -106,7 +105,7 @@ contract CheddaCampaign is Ownable {
     }
 
     function hasEnded() public view returns (bool) {
-        return end < block.timestamp;
+        return end > block.timestamp;
     }
 
     function isCurrent() public view returns (bool) {

@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC165.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./IMintPolicy.sol";
 
 interface IMarketNFT is IERC721 {
     /**
@@ -16,7 +15,9 @@ interface IMarketNFT is IERC721 {
      */
     function metadataURI() external view returns (string memory);
 }
-contract MarketNFT is IMarketNFT, ERC721Enumerable, Ownable {
+
+
+contract MarketNFT is  ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter internal _tokenIds;
 
@@ -32,7 +33,7 @@ contract MarketNFT is IMarketNFT, ERC721Enumerable, Ownable {
     /// @notice Platform fee receipient
     address payable public feeReceipient;
 
-    string public override metadataURI;
+    string public metadataURI;
 
     /// @dev Events of the contract
     event Minted(
@@ -74,7 +75,8 @@ contract MarketNFT is IMarketNFT, ERC721Enumerable, Ownable {
      @return uint256 The token ID of the token that was minted
      */
     function mint(address mintAddress, string calldata tokenUri)
-        external
+        public
+        virtual
         payable
         returns (uint256)
     {

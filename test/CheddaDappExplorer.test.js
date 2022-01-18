@@ -96,12 +96,16 @@ describe("CheddaDappExplorer", function () {
 
     const reviewUrl = "http://myreview.com"
     await explorer.addReview(dappAddress, reviewUrl, 500);
+    averageRating = await explorer.averageRating(dappAddress)
+    expect(averageRating).to.equal(500);
+
+    await explorer.connect(signer1).addReview(dappAddress, `${reviewUrl}/2`, 300)
     reviews = await explorer.getReviews(dappAddress);
     averageRating = await explorer.averageRating(dappAddress)
 
-    expect(reviews.length).to.equal(1);
+    expect(reviews.length).to.equal(2);
     expect(reviews[0].contentURI).to.equal(reviewUrl)
-    expect(averageRating).to.equal(500);
+    expect(averageRating).to.equal(400);
   });
 
   it("Can issue rewards", async function() {
