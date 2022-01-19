@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "./MarketNFT.sol";
 
 interface IWhitelistedNFT {
-   function whiteListAddress(address user, bool isWhitelisted) external;
+   function whiteListAddress(address user, bool shouldWhitelist) external;
    function isWhitelisted(address user) external returns (bool);
 }
 

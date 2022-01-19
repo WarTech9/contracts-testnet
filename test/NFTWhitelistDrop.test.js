@@ -25,10 +25,10 @@ describe("MarketNFT", function () {
   it("Can enter", async function () {
       await drop.enter()
       let entries = await drop.getEntries()
+      console.log('entries = ', entries)
       expect(entries.length).to.equal(1)
       await drop.connect(tokenRecipient).enter()
       entries = await drop.getEntries()
-      console.log('entries = ', entries)
       expect(entries.length).to.equal(2)
   });
 

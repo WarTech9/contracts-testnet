@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "../common/CheddaAddressRegistry.sol";
 import "../common/CheddaEntropy.sol";
+import "../rewards/CheddaXP.sol";
 import "./WhitelistedNFT.sol";
 
 struct DropEntry {
@@ -13,6 +14,9 @@ struct DropEntry {
     uint256 tickets;
 }
 interface ICheddaDrop {
+    function start() external returns (uint);
+    function end() external returns (uint);
+    function metadataURI() external returns (string memory);
     function enter() external;
     function pickWinners() external;
     function getEntries() external view returns (DropEntry[] memory);
@@ -20,12 +24,12 @@ interface ICheddaDrop {
 
 contract NFTWhitelistDrop is Ownable, ICheddaDrop {
 
-
-    uint256 public start;
-    uint256 public end;
+    uint256 public override start;
+    uint256 public override end;
     uint256 public currentSlot;
-    string public metadataURI;
     uint256 public numberOfWinners;
+
+    string public override metadataURI;
 
     mapping (address => bool) public hasEntered;
     address public nftContract;
@@ -61,6 +65,9 @@ contract NFTWhitelistDrop is Ownable, ICheddaDrop {
     function enter() public override isOpen() {
         // todo: implement slot count based on Chedda NFT balance
         require(!hasEntered[_msgSender()], "Drop: already entered");
+        require(CheddaXP(registry.cheddaXP()).balanceOf(_msgSender()) > 0,
+        "Drop: CheddaXP required");
+        IEntropy(registry.entropy()).addEntropy();
         hasEntered[_msgSender()] = true;
         uint256 ticketCount = 1; // todo: get ticket count from Chedda NFT rank
         currentSlot += ticketCount;
@@ -71,7 +78,6 @@ contract NFTWhitelistDrop is Ownable, ICheddaDrop {
         });
         entries.push(entry);
     }
-
 
     function pickWinners() public override hasEnded() onlyOwner() {
         for (uint256 i = 0; i < numberOfWinners; i++) {
@@ -84,7 +90,7 @@ contract NFTWhitelistDrop is Ownable, ICheddaDrop {
         return entries;
     }
 
-    function pickWinner() private view returns (address) {
+    function pickWinner() private view hasEnded() returns (address) {
        uint256 winningTicket = randomNumber(currentSlot);
        for (uint256 i = 0; i < entries.length; i++) {
            DropEntry storage entry = entries[i];
@@ -95,7 +101,17 @@ contract NFTWhitelistDrop is Ownable, ICheddaDrop {
        return address(0);
     }
 
+    function myTickets() public view returns (uint256) {
+        for (uint256 i = 0; i < entries.length; i++) {
+            if (entries[i].user == _msgSender()) {
+                return entries[i].tickets;
+            }
+        }
+        return 0;
+    }
+
     function randomNumber(uint256 max) private view returns (uint256) {
         return IEntropy(registry.entropy()).randomNumber(max);
     }
+
 }
