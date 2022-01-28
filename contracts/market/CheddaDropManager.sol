@@ -43,6 +43,7 @@ contract CheddaDropManager is Ownable {
     Counters.Counter internal counter;
 
     DropDetails[] public drops;
+    // add mapping of id to DropDetails, remove id when delete
 
     address public registry;
 
@@ -77,6 +78,17 @@ contract CheddaDropManager is Ownable {
         }));
         emit DropCreated(id, start, end, dropAddress, tokenAddress, metadataURI);
         return dropAddress;
+    }
+
+    function deleteDrop(uint256 id) public {
+        for (uint256 i = 0; i < drops.length; i++) {
+            DropDetails memory drop = drops[i];
+            if (drop.id == id) {
+                drops[i] = drops[drops.length - 1];
+                delete drops[drops.length - 1];
+                break;
+            }
+        }
     }
 
     function getDrops() public view returns (DropDetails[] memory) {
