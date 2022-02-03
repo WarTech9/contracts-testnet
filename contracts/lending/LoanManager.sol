@@ -30,7 +30,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     enum LoanState {
         all,
         open,
-        repayed,
+        repaid,
         foreclosed
     }
 
@@ -51,7 +51,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
 
     enum RequestState {
         all,
-        open,
+        pending,
         cancelled,
         accepted
     }
@@ -60,9 +60,10 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         uint256 requestID;
         address nftContract;
         uint256 tokenID;
-        uint256 amount;
         uint256 loanLength;
         address borrower;
+        uint256 amount;
+        uint256 repayment;
         RequestState state;
     }
 
@@ -70,6 +71,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     Counters.Counter internal requestCounter;
     Counters.Counter internal loanCounter;
     address public tokenAddress;
+    uint256 public totalLoanValue;
 
     // Interest rate to 2 basis points.
     // 1% = 100, 100% = 10000
@@ -81,11 +83,23 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
 
     bytes4 internal constant IS_ERC721 = 0x150b7a02;
 
+    // 1 based. 0 index is reserved for invalid loan
     LoanRequest[] public requests;
+
+    // 1 based. 0 index is reserved for invalid loan
     Loan[] public loans;
+
+    address public registry;
+
+    // nft address => tokenID => requestID
+    mapping (address => mapping (uint256 => uint256))public openRequests;
+
+    // nft address => tokenID => loanID
+    mapping (address => mapping(uint256 => uint256))public openLoans;
 
     constructor(address token) {
         tokenAddress = token;
+        createDummy();
     }
 
     modifier canTransferTokens(
@@ -106,6 +120,11 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             "Loan: Not approved"
         );
         _;
+    }
+
+
+    function updateRegistry(address registryAddress) public onlyOwner() {
+        registry = registryAddress;
     }
 
     /// @notice Caller is requesting a loan, putting up his NFT.
@@ -136,18 +155,22 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             "Loan: Must approve"
         );
 
+        uint256 repayment = calculateRepaymentAmount(amountRequested, duration);
+
         LoanRequest memory request = LoanRequest({
             requestID: requestCounter.current(),
             nftContract: nftContract,
             tokenID: tokenId,
             amount: amountRequested,
+            repayment: repayment,
             loanLength: duration,
             borrower: _msgSender(),
-            state: RequestState.open
+            state: RequestState.pending
         });
-        requestCounter.increment();
         requests.push(request);
+        requestCounter.increment();
 
+        openRequests[nftContract][tokenId] = request.requestID;
         emit LoanRequested(_msgSender(), nftContract, tokenId, amountRequested);
     }
 
@@ -155,23 +178,26 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     /// @param requestId ID of request to cancel
     /// Can only be called by the address that created the request
     function cancelRequest(uint256 requestId) public {
+        require(requestId < requestCounter.current(), "Loan: Invalid id");
+
         LoanRequest storage request = requests[requestId];
-        require(request.borrower == _msgSender(), "Loan: Not allowed");
-        require(request.state == RequestState.open, "Loan: Invalid state");
+        require(request.borrower == _msgSender(), "Loan: Not borrower");
+        require(request.state == RequestState.pending, "Loan: Invalid state");
+        openRequests[request.nftContract][request.tokenID] = 0;
         request.state = RequestState.cancelled;
 
         emit RequestCancelled(_msgSender(), requestId);
     }
 
-    function getMyRequests(RequestState state)
+    function getLoanRequests(address user, RequestState state)
         public
         view
         returns (LoanRequest[] memory)
     {
         uint256 numberOfRequests = 0;
-        for (uint256 i = 0; i < requests.length; i++) {
+        for (uint256 i = 1; i < requests.length; i++) {
             LoanRequest storage request = requests[i];
-            if (request.borrower == _msgSender()) {
+            if (request.borrower == user || user == address(0)) {
                 if (state == RequestState.all) {
                     numberOfRequests++;
                 } else if (state == request.state) {
@@ -181,9 +207,9 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         }
         LoanRequest[] memory myRequests = new LoanRequest[](numberOfRequests);
         uint256 j = 0;
-        for (uint256 i = 0; i < requests.length; i++) {
+        for (uint256 i = 1; i < requests.length; i++) {
             LoanRequest storage request = requests[i];
-            if (request.borrower == _msgSender()) {
+            if (request.borrower == user || user == address(0)) {
                 if (state == RequestState.all) {
                     myRequests[j++] = requests[i];
                 } else if (state == request.state) {
@@ -196,9 +222,9 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
 
     /// @dev Called to open a new loan. The caller of this is the lender
     /// @param requestID ID of loan request
-    function openLoan(uint256 requestID) public {
+    function openLoan(uint256 requestID) public payable {
         LoanRequest storage request = requests[requestID];
-        require(request.state == RequestState.open, "Loan: Not open");
+        require(request.state == RequestState.pending, "Loan: Not open");
         IERC20 loanCurrency = IERC20(tokenAddress);
         IERC721 nft = IERC721(request.nftContract);
         address payable lender = payable(_msgSender());
@@ -217,6 +243,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             request.amount,
             request.loanLength
         );
+
         Loan memory loan = Loan({
             loanID: loanCounter.current(),
             nftContract: request.nftContract,
@@ -231,14 +258,23 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             lender: lender,
             borrower: borrower
         });
-        loanCurrency.transferFrom(
-            _msgSender(),
-            borrower,
-            request.amount
-        );
+
+        totalLoanValue += request.amount;
+        openRequests[request.nftContract][request.tokenID] = 0;
+        openLoans[request.nftContract][request.tokenID] = loan.loanID;
+
+        // TODO: used if loan is denominated in ERC20
+        // loanCurrency.transferFrom(
+        //     _msgSender(),
+        //     borrower,
+        //     request.amount
+        // );
+
+        borrower.transfer(msg.value);
         nft.safeTransferFrom(borrower, address(this), request.tokenID);
-        loans.push(loan);
+
         loanCounter.increment();
+        loans.push(loan);
 
         emit LoanOpened(_msgSender(), borrower, request.amount);
     }
@@ -246,7 +282,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     /// @dev Repays an open loan. Requires prior approval of token transfer for the loan repayment amount.
     /// This can only be called by the borrower.
     /// @param loanID the id of loan to repay
-    function repay(uint256 loanID) public {
+    function repayToken(uint256 loanID) public {
         Loan storage loan = loans[loanID];
         IERC20 loanCurrency = IERC20(tokenAddress);
         IERC721 nft = IERC721(loan.nftContract);
@@ -256,14 +292,36 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
                 loan.repaymentAmount,
             "Loan: Not allowed"
         );
-
+        
+        loan.state = LoanState.repaid;
+        openLoans[loan.nftContract][loan.tokenID] = 0;
+        totalLoanValue -= loan.principal;
         loanCurrency.transferFrom(
             loan.borrower,
             loan.lender,
             loan.repaymentAmount
         );
         nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
-        loan.state = LoanState.repayed;
+        emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
+    }
+
+    function repay(uint256 loanID) public payable {
+        Loan storage loan = loans[loanID];
+        IERC721 nft = IERC721(loan.nftContract);
+        require(_msgSender() == loan.borrower, "Loan: Can not repay");
+        require(
+            msg.value >= loan.repaymentAmount,
+            "Loan: Not enough"
+        );
+        loan.state = LoanState.repaid;
+        openLoans[loan.nftContract][loan.tokenID] = 0;
+        totalLoanValue -= loan.principal;
+
+        loan.lender.transfer(loan.repaymentAmount);
+        if (msg.value > loan.repaymentAmount) {
+            payable(_msgSender()).transfer(msg.value - loan.repaymentAmount);
+        }
+        nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
 
         emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
     }
@@ -282,19 +340,22 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         IERC721 nft = IERC721(loan.nftContract);
         nft.safeTransferFrom(address(this), loan.lender, loan.tokenID);
         loan.state = LoanState.foreclosed;
+        openLoans[loan.nftContract][loan.tokenID] = 0;
+
+        totalLoanValue -= loan.principal;
 
         emit LoanForeclosed(_msgSender(), loan.borrower);
     }
 
-    function getMyLoansAsBorrower(LoanState state)
+    function getLoansBorrowed(address borrower, LoanState state)
         public
         view
         returns (Loan[] memory)
     {
         uint256 numberOfLoans = 0;
-        for (uint256 i = 0; i < loans.length; i++) {
+        for (uint256 i = 1; i < loans.length; i++) {
             Loan memory loan = loans[i];
-            if (loan.borrower == _msgSender()) {
+            if (loan.borrower == borrower || borrower == address(0)) {
                 if (state == LoanState.all) {
                     numberOfLoans++;
                 } else if (state == loan.state) {
@@ -304,9 +365,9 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         }
         Loan[] memory myLoans = new Loan[](numberOfLoans);
         uint256 j = 0;
-        for (uint256 i = 0; i < loans.length; i++) {
+        for (uint256 i = 1; i < loans.length; i++) {
             Loan memory loan = loans[i];
-            if (loan.borrower == _msgSender()) {
+            if (loan.borrower == borrower || borrower == address(0)) {
                 if (state == LoanState.all) {
                     myLoans[j++] = loan;
                 } else if (state == loan.state) {
@@ -317,15 +378,15 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         return myLoans;
     }
 
-    function getMyLoansAsLender(LoanState state)
+    function getLoansLent(address lender, LoanState state)
         public
         view
         returns (Loan[] memory)
     {
         uint256 numberOfLoans = 0;
-        for (uint256 i = 0; i < loans.length; i++) {
+        for (uint256 i = 1; i < loans.length; i++) {
             Loan memory loan = loans[i];
-            if (loan.lender == _msgSender()) {
+            if (loan.lender == lender || lender == address(0)) {
                 if (state == LoanState.all) {
                     numberOfLoans++;
                 } else if (state == loan.state) {
@@ -335,9 +396,9 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         }
         Loan[] memory myLoans = new Loan[](numberOfLoans);
         uint256 j = 0;
-        for (uint256 i = 0; i < loans.length; i++) {
+        for (uint256 i = 1; i < loans.length; i++) {
             Loan memory loan = loans[i];
-            if (loan.lender == _msgSender()) {
+            if (loan.lender == lender || lender == address(0)) {
                 if (state == LoanState.all) {
                     myLoans[j++] = loan;
                 } else if (state == loan.state) {
@@ -380,8 +441,41 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         view
         returns (uint256)
     {
-        uint256 interest = (((principal * interestRate) / 100) *
-            (duration / 365)) / 1 days;
+        uint256 interest = ((principal * interestRate) / 100) *
+            (duration / 365) / 1 days;
         return principal + interest / 100;
+    }
+
+    // 0th index reserved for no loan.
+    function createDummy() private {
+        Loan memory loan = Loan({
+            loanID: 0,
+            nftContract: address(0),
+            tokenID: 0,
+            principal: 0,
+            repaymentAmount: 0,
+            openedAt: 0,
+            expiresAt: 0,
+            closedAt: 0,
+            interestRate: 0,
+            state: LoanState.all,
+            lender: payable(0),
+            borrower: payable(0)
+        });
+        loanCounter.increment();
+        loans.push(loan);
+
+        LoanRequest memory req = LoanRequest({
+            requestID: 0,
+            nftContract: address(0),
+            tokenID: 0,
+            amount: 0,
+            repayment: 0,
+            loanLength: 0,
+            borrower: address(0),
+            state: RequestState.all
+        });
+        requestCounter.increment();
+        requests.push(req);
     }
 }

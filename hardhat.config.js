@@ -253,6 +253,17 @@ module.exports = {
       gasPrice: 31000000000,
       timeout: 120000,
     },
+    avalanchefuji: {
+      // Infura
+      // url: `https://polygon-mumbai.infura.io/v3/${infuraId}`,
+      url: `https://api.avax-test.network/ext/bc/C/rpc`,
+      accounts: [privateKey, privateKey2],
+      gas: 8000000,
+      chainId: 43113,
+      gasPrice: 31000000000,
+      timeout: 120000,
+    },
+
     matic: {
       // Infura
       // url: `https://polygon-mainnet.infura.io/v3/${infuraId}`,

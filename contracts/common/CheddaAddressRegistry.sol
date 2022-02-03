@@ -21,6 +21,10 @@ interface ICheddaAddressRegistry {
     function entropy() external view returns (address);
 
     function drops() external view returns (address);
+
+    function loanManager() external view returns (address);
+
+    function wrappedNativeToken() external view returns (address);
 }
 
 contract CheddaAddressRegistry is Ownable {
@@ -36,6 +40,8 @@ contract CheddaAddressRegistry is Ownable {
     event GovernorUpdated(address indexed newAddress, address indexed caller);
     event CheddaNFTUpdated(address indexed newAddress, address indexed caller);
     event DropsUpdated(address indexed newAddress, address indexed caller);
+    event LoanManagerUpdated(address indexed newAddress, address indexed caller);
+    event WrappedNativeTokenUpdated(address indexed tokenAddress, address indexed caller);
 
     address public cheddaXP;
     address public cheddaNFT;
@@ -48,6 +54,8 @@ contract CheddaAddressRegistry is Ownable {
     address public entropy;
     address public rewards;
     address public drops;
+    address public loanManager;
+    address public wrappedNativeToken;
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;
@@ -102,5 +110,15 @@ contract CheddaAddressRegistry is Ownable {
     function setDrops(address dropsAddress) external onlyOwner() {
         drops = dropsAddress;
         emit DropsUpdated(dropsAddress, _msgSender());
+    }
+
+    function setLoanManager(address loanManagerAddress) external onlyOwner() {
+        loanManager = loanManagerAddress;
+        emit LoanManagerUpdated(loanManagerAddress, _msgSender());
+    }
+
+    function setWrappedNativeToken(address tokenAddress) external onlyOwner() {
+        wrappedNativeToken = tokenAddress;
+        emit WrappedNativeTokenUpdated(tokenAddress, _msgSender());
     }
 }
