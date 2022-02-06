@@ -27,6 +27,11 @@ interface ICheddaAddressRegistry {
     function wrappedNativeToken() external view returns (address);
 }
 
+interface IRegisteredContract {
+    function registryAddress() external view returns (address);
+    function updateRegistry(address registryAddress) external;
+}
+
 contract CheddaAddressRegistry is Ownable {
 
     event CheddaXPUpdated(address indexed newAddress, address indexed caller);
@@ -49,7 +54,7 @@ contract CheddaAddressRegistry is Ownable {
     address public market;
     address public dappStoreExplorer;
     address public marketExplorer;
-    address public govenor;
+    address public governor;
     address public mintPolicy;
     address public entropy;
     address public rewards;
@@ -59,37 +64,37 @@ contract CheddaAddressRegistry is Ownable {
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;
-        emit CheddaXPUpdated(xp, _msgSender());
+        emit CheddaXPUpdated(cheddaXP, _msgSender());
     }
 
     function setCheddaNFT(address nftAddress) external onlyOwner() {
         cheddaNFT = nftAddress;
-        emit CheddaNFTUpdated(nftAddress, _msgSender());
+        emit CheddaNFTUpdated(cheddaNFT, _msgSender());
     }
 
     function setDappStore(address storeAddress) external onlyOwner() {
         dappStore = storeAddress;
-        emit DappStoreUpdated(storeAddress, _msgSender());
+        emit DappStoreUpdated(dappStore, _msgSender());
     }
 
     function setDappstoreExplorer(address dappStoreExplorerAddress) external onlyOwner() {
         dappStoreExplorer = dappStoreExplorerAddress;
-        emit DappExplorerUpdated(dappStoreExplorerAddress, _msgSender());
+        emit DappExplorerUpdated(dappStoreExplorer, _msgSender());
     }
 
     function setMarket(address marketAddress) external onlyOwner() {
         market = marketAddress;
-        emit MarketUpdated(marketAddress, _msgSender());
+        emit MarketUpdated(market, _msgSender());
     }
 
     function setMarketExplorer(address marketExplorerAddress) external onlyOwner() {
         marketExplorer = marketExplorerAddress;
-        emit MarketExplorerUpdated(marketExplorerAddress, _msgSender());
+        emit MarketExplorerUpdated(marketExplorer, _msgSender());
     }
 
-    function setGovenor(address govenorAddress) external onlyOwner() {
-        govenor = govenorAddress;
-        emit GovernorUpdated(govenorAddress, _msgSender());
+    function setGovernor(address governorAddress) external onlyOwner() {
+        governor = governorAddress;
+        emit GovernorUpdated(governor, _msgSender());
     }
 
     function setMintPolicy(address mintPolicyAddress) external onlyOwner() {

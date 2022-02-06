@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
+import "../market/CheddaMarketExplorer.sol";
 
 contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     event LoanRequested(
@@ -18,6 +19,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
     event LoanOpened(
         address indexed openedByLender,
         address indexed borrower,
+        uint256 indexed loanRequestId,
         uint256 amount
     );
     event LoanRepaid(
@@ -171,7 +173,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         requestCounter.increment();
 
         openRequests[nftContract][tokenId] = request.requestID;
-        emit LoanRequested(_msgSender(), nftContract, tokenId, amountRequested);
+        emit LoanRequested(msg.sender, nftContract, tokenId, amountRequested);
     }
 
     /// @dev Cancels a request for a loan
@@ -186,7 +188,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         openRequests[request.nftContract][request.tokenID] = 0;
         request.state = RequestState.cancelled;
 
-        emit RequestCancelled(_msgSender(), requestId);
+        emit RequestCancelled(msg.sender, requestId);
     }
 
     function getLoanRequests(address user, RequestState state)
@@ -222,7 +224,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
 
     /// @dev Called to open a new loan. The caller of this is the lender
     /// @param requestID ID of loan request
-    function openLoan(uint256 requestID) public payable {
+    function openLoanToken(uint256 requestID) public {
         LoanRequest storage request = requests[requestID];
         require(request.state == RequestState.pending, "Loan: Not open");
         IERC20 loanCurrency = IERC20(tokenAddress);
@@ -263,20 +265,71 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         openRequests[request.nftContract][request.tokenID] = 0;
         openLoans[request.nftContract][request.tokenID] = loan.loanID;
 
-        // TODO: used if loan is denominated in ERC20
-        // loanCurrency.transferFrom(
-        //     _msgSender(),
-        //     borrower,
-        //     request.amount
-        // );
+        loanCurrency.transferFrom(
+            _msgSender(),
+            borrower,
+            request.amount
+        );
 
-        borrower.transfer(msg.value);
         nft.safeTransferFrom(borrower, address(this), request.tokenID);
+        reportTransfer(loan.nftContract, loan.tokenID, borrower, address(this), 0);
 
         loanCounter.increment();
         loans.push(loan);
 
-        emit LoanOpened(_msgSender(), borrower, request.amount);
+        emit LoanOpened(_msgSender(), borrower, request.requestID, request.amount);
+    }
+
+    function openLoan(uint256 requestID) public payable {
+        LoanRequest storage request = requests[requestID];
+        require(request.state == RequestState.pending, "Loan: Not open");
+        request.state = RequestState.accepted;
+        IERC721 nft = IERC721(request.nftContract);
+        address payable lender = payable(_msgSender());
+        address payable borrower = payable(request.borrower);
+
+        require(lender != borrower, "Loan: Not allowed");
+
+        require(
+            msg.value >= request.amount,
+            "Loan: Insufficient value"
+        );
+        address approvedAddress = nft.getApproved(request.tokenID);
+        require(approvedAddress == address(this), "Loan: NFT not approved");
+
+        uint256 repaymentAmount = calculateRepaymentAmount(
+            request.amount,
+            request.loanLength
+        );
+
+        Loan memory loan = Loan({
+            loanID: loanCounter.current(),
+            nftContract: request.nftContract,
+            tokenID: request.tokenID,
+            principal: request.amount,
+            repaymentAmount: repaymentAmount,
+            openedAt: block.timestamp,
+            expiresAt: block.timestamp + request.loanLength,
+            closedAt: 0,
+            interestRate: interestRate,
+            state: LoanState.open,
+            lender: lender,
+            borrower: borrower
+        });
+
+        totalLoanValue += request.amount;
+        openRequests[request.nftContract][request.tokenID] = 0;
+        openLoans[request.nftContract][request.tokenID] = loan.loanID;
+
+        nft.safeTransferFrom(borrower, address(this), request.tokenID);
+        reportTransfer(loan.nftContract, loan.tokenID, borrower, address(this), 0);
+
+        borrower.transfer(msg.value);
+
+        loanCounter.increment();
+        loans.push(loan);
+
+        emit LoanOpened(_msgSender(), borrower, request.requestID, request.amount);
     }
 
     /// @dev Repays an open loan. Requires prior approval of token transfer for the loan repayment amount.
@@ -294,6 +347,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         );
         
         loan.state = LoanState.repaid;
+        loan.closedAt = block.timestamp;
         openLoans[loan.nftContract][loan.tokenID] = 0;
         totalLoanValue -= loan.principal;
         loanCurrency.transferFrom(
@@ -302,6 +356,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             loan.repaymentAmount
         );
         nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
+        reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.borrower, 0);
         emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
     }
 
@@ -314,6 +369,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             "Loan: Not enough"
         );
         loan.state = LoanState.repaid;
+        loan.closedAt = block.timestamp;
         openLoans[loan.nftContract][loan.tokenID] = 0;
         totalLoanValue -= loan.principal;
 
@@ -322,6 +378,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
             payable(_msgSender()).transfer(msg.value - loan.repaymentAmount);
         }
         nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
+        reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.borrower, 0);
 
         emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
     }
@@ -338,11 +395,13 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         require(_msgSender() == loan.lender, "Loan: Not lender");
 
         IERC721 nft = IERC721(loan.nftContract);
-        nft.safeTransferFrom(address(this), loan.lender, loan.tokenID);
         loan.state = LoanState.foreclosed;
+        loan.closedAt = block.timestamp;
         openLoans[loan.nftContract][loan.tokenID] = 0;
 
         totalLoanValue -= loan.principal;
+        nft.safeTransferFrom(address(this), loan.lender, loan.tokenID);
+        reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.lender, 0);
 
         emit LoanForeclosed(_msgSender(), loan.borrower);
     }
@@ -444,6 +503,11 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         uint256 interest = ((principal * interestRate) / 100) *
             (duration / 365) / 1 days;
         return principal + interest / 100;
+    }
+
+    function reportTransfer(address nftContract, uint256 tokenID, address from, address to, uint256 amount) private {
+        address explorerAddress = ICheddaAddressRegistry(registry).marketExplorer();
+        IMarketExplorer(explorerAddress).itemTransfered(nftContract, tokenID, from, to, amount);
     }
 
     // 0th index reserved for no loan.
