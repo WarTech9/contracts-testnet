@@ -200,14 +200,14 @@ module.exports = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       gas: 2100000,
-      gasPrice: 1000000000000,
+      gasPrice: 199000000000,
     },
     harmonymain: {
       url: "https://api.harmony.one",
       accounts: [privateKey],
       chainId: 1666600000,
       gas: 8500000,
-      gasPrice: 31000000000,
+      gasPrice: 199000000000,
     },
     harmonytest: {
       url: "https://api.s0.b.hmny.io",
@@ -260,7 +260,7 @@ module.exports = {
       accounts: [privateKey, privateKey2],
       gas: 8000000,
       chainId: 43113,
-      gasPrice: 31000000000,
+      gasPrice: 225000000000, // 225 Gwei
       timeout: 120000,
     },
 
@@ -270,7 +270,7 @@ module.exports = {
       url: "https://rpc-mainnet.maticvigil.com",
       accounts: [privateKey],
       gas: 8500000,
-      gasPrice: 31000000000,
+      gasPrice: 199000000000,
       timeout: 60000,
     },
   },

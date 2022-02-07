@@ -15,6 +15,5 @@ coverage
 coverage.json
 
 # contract addresses
-addresses
 unknown-*.json
 dapps
