@@ -14,7 +14,7 @@ async function main() {
 
   const ChainlinkPriceConsumerV3 = await hre.ethers.getContractFactory("ChainlinkPriceConsumerV3");
   consumer = await ChainlinkPriceConsumerV3.deploy(priceFeed.address);
-
+  await consumer.deployed()
   console.log('price feed address is: ', priceFeed.address)
   console.log('consumer deployed to address: ', consumer.address)
   await registry.setPriceConsumer(consumer.address)

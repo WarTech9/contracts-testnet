@@ -17,7 +17,7 @@ let nft
 let explorer
 
 const startIndex = 1
-const endIndex = 15
+const endIndex = 40
 let feeRecipient;
 let tokenRecipient;
 const mintFee = ethers.utils.parseUnits("0.001", "ether");
@@ -42,8 +42,11 @@ async function initialize() {
 
     const MarketNFT = await hre.ethers.getContractFactory("MarketNFT")
     nft = await MarketNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
-    await nft.deployed();
-    console.log(`Deployed NFT = ${nft}`)
+    await nft.deployed()
+
+    // to add NFTs to an existing contract
+    // nft = MarketNFT.attach("0x055502F6DBBC01418d77aFf7Af98FDb8e160910e")
+    console.log(`Deployed NFT = ${nft.address}`)
     return nft
 }
 
@@ -56,10 +59,13 @@ async function listCollection(nft) {
         console.log(`***** Processing index ${i}`)
         let metadataURI = getTokenURI(i)
         let tokenId = await mintNFT(tokenRecipient.address, metadataURI, mintFee)
+        await wait(25000)
         console.log(`*** Minted tokenID: ${JSON.stringify(tokenId)}`)
         await addNFT(nft.address, i)
+        await wait(15000)
         let tx = await listNFT(nft.address, i)
         txs.push(tx)
+        await wait(15000)
         console.log(`*** Listed ${tokenId} => ${tx}`)
     }
     let allItems = await explorer.getAllItems()
@@ -68,8 +74,7 @@ async function listCollection(nft) {
 }
 
 async function mintNFT(recipientAddress, tokenURI, mintFee) {
-    tokenId = await nft.mint(recipientAddress, tokenURI, { value: mintFee });
-    return tokenId;
+    return await nft.mint(recipientAddress, tokenURI, { value: mintFee });
 }
 async function addNFT(tokenAddress, tokenId) {
     let tx = await market
@@ -109,6 +114,12 @@ async function main() {
     let nft = await initialize()
     await listCollection(nft)
     await save(nft)
+}
+
+function wait(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms)
+    })
 }
 
 main()

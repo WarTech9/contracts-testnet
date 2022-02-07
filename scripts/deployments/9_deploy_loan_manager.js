@@ -16,6 +16,7 @@ async function main() {
   const wrappedNativeTokenAddress = await registry.wrappedNativeToken()
   console.log('wrapped native token address = ', wrappedNativeTokenAddress)
   loanManager = await CheddaLoanManager.deploy(wrappedNativeTokenAddress);
+  await loanManager.deployed()
 
   await loanManager.updateRegistry(registry.address)
   await registry.setLoanManager(loanManager.address)

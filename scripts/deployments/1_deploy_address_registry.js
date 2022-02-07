@@ -10,6 +10,7 @@ async function main() {
   console.log('first signer = ', signers[0].address)
   CheddaAddressRegistry = await hre.ethers.getContractFactory("CheddaAddressRegistry");
   registry = await CheddaAddressRegistry.deploy();
+  await registry.deployed()
   await registerWrappedToken()
   
   console.log("CheddaAddressRegistry deployed to:", registry.address);

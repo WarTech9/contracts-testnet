@@ -15,6 +15,7 @@ async function main() {
 
   const CheddaDappStore = await hre.ethers.getContractFactory("CheddaDappStore");
   dappStore = await CheddaDappStore.deploy();
+  await dappStore.deployed()
   
   console.log("CheddaDappStore deployed to:", dappStore.address);
   await dappStore.updateRegistry(registry.address)

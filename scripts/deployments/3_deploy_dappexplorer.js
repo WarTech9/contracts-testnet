@@ -15,6 +15,7 @@ async function main() {
 
   const CheddaDappExplorer = await hre.ethers.getContractFactory("CheddaDappExplorer");
   dappExplorer = await CheddaDappExplorer.deploy();
+  await dappExplorer.deployed()
 
   console.log("CheddaDappExplorer deployed to:", dappExplorer.address);
   await dappExplorer.updateRegistry(registry.address)

@@ -9,8 +9,12 @@ import "../common/CheddaAddressRegistry.sol";
 import "./CheddaMarket.sol";
 import "./MarketNFT.sol";
 
+interface IMarketExplorer {
+    function itemTransfered(address nftContract, uint256 tokenID, address from, address to, uint256 amount) external;
+}
+
 // market explorer
-contract CheddaMarketExplorer is Ownable {
+contract CheddaMarketExplorer is Ownable, IMarketExplorer {
     struct Collection {
         address nftContract;
         string metadataURI;
@@ -384,7 +388,7 @@ contract CheddaMarketExplorer is Ownable {
             itemsOwned[owner].push(OwnedItem(nftContract, tokenID, amount));
         }
 
-    // todo: add marketOnly modiifer
+    // todo: add marketOnly modifier
     function reportMarketSale(
         address nftContract,
         uint256 tokenID,
@@ -408,19 +412,23 @@ contract CheddaMarketExplorer is Ownable {
         }
 
         // // update itemsOwned
-        uint256 sellerItemsOwned = itemsOwned[seller].length;
+        itemTransfered(nftContract, tokenID, seller, buyer, amountPaid);   
+    }
+
+    function itemTransfered(address nftContract, uint256 tokenID, address from, address to, uint256 amountPaid) public override {
+       uint256 sellerItemsOwned = itemsOwned[from].length;
         for (uint256 i = 0; i < sellerItemsOwned; i++) {
-            OwnedItem memory item = itemsOwned[seller][i];
+            OwnedItem memory item = itemsOwned[from][i];
             if (item.nftContract == nftContract && item.tokenID == tokenID) {
-                itemsOwned[seller][i] = itemsOwned[seller][
+                itemsOwned[from][i] = itemsOwned[from][
                     sellerItemsOwned - 1
                 ];
-                itemsOwned[seller].pop();
+                itemsOwned[from].pop();
                 break;
             }
         }
 
-        itemsOwned[buyer].push(OwnedItem(nftContract, tokenID, amountPaid));
+        itemsOwned[to].push(OwnedItem(nftContract, tokenID, amountPaid)); 
     }
 
     function reportListingCancellation(address nftContract, uint256 tokenID) public {

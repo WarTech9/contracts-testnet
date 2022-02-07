@@ -14,6 +14,7 @@ let consumer
 async function main() {
   const TwitterAPIConsumer = await hre.ethers.getContractFactory("TwitterAPIConsumer");
   consumer = await TwitterAPIConsumer.deploy(linkAddress, oracle, jobIdBytes, fee.toString());
+  await consumer.deployed()
 
   console.log("TwitterAPIConsumer deployed to:", consumer.address);
   console.log('network name = ', networkName)
@@ -28,7 +29,7 @@ async function save() {
 
   `
   let data = JSON.stringify(config)
-  let filename = `./addresses/${networkName}/consumer.json`
+  let filename = `./addresses/${networkName}/api-consumer.json`
   fs.writeFileSync(filename, JSON.parse(data))
   console.log(`Addresses written to file: ${filename}`)
 }

@@ -25,7 +25,7 @@ let nft
 let explorer
 
 const startIndex = 1
-const endIndex = 10
+const endIndex = 40
 let feeRecipient;
 let tokenRecipient;
 const mintFee = ethers.utils.parseUnits("0.001", "ether");
@@ -50,13 +50,14 @@ async function initialize() {
 
     const MarketNFT = await hre.ethers.getContractFactory("MarketNFT")
     nft = await MarketNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
-    await nft.deployed();
-    console.log(`Deployed NFT = ${nft}`)
+    await nft.deployed()
+    // nft = await MarketNFT.attach("0xcd7AbFd6Cb848A5397A29fCC8Cb5D4CE9C993814")
+    console.log(`Deployed NFT = ${nft.address}`)
     return nft
 }
 
 function randomNumber() {
-    return (Math.ceil( Math.random() * 20 ) + 1).toString()
+    return (Math.ceil( Math.random() * 20 )).toString()
 }
 async function listCollection(nft) {
     let txs = []

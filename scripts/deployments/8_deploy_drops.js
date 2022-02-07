@@ -14,6 +14,7 @@ async function main() {
 
   const CheddaDropManager = await hre.ethers.getContractFactory("CheddaDropManager");
   drops = await CheddaDropManager.deploy();
+  await drops.deployed()
 
   console.log('drops deployed to address: ', drops.address)
   await drops.updateRegistry(registry.address)

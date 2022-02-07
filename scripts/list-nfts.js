@@ -42,8 +42,8 @@ async function initialize() {
     const CheddaMarketExplorer = await hre.ethers.getContractFactory("CheddaMarketExplorer");
     explorer = await CheddaMarketExplorer.attach(addresses.explorer)
 
-    const CheddaNFT = await hre.ethers.getContractFactory("CheddaNFT")
-    nft = await CheddaNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
+    const MarketNFT = await hre.ethers.getContractFactory("MarketNFT")
+    nft = await MarketNFT.deploy(mintFee, feeRecipient.address, config.name, config.symbol, config.metadataURI);
     await nft.deployed();
     console.log(`Deployed NFT = ${nft}`)
     return nft

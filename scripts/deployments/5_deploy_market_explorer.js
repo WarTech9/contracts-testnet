@@ -15,6 +15,7 @@ async function main() {
 
   const CheddaMarketExplorer = await hre.ethers.getContractFactory("CheddaMarketExplorer");
   marketExplorer = await CheddaMarketExplorer.deploy();
+  await marketExplorer.deployed()
 
   await marketExplorer.updateRegistry(registry.address)
   await registry.setMarketExplorer(marketExplorer.address)

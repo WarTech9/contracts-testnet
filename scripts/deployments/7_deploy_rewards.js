@@ -15,6 +15,7 @@ async function main() {
 
   const CheddaRewards = await hre.ethers.getContractFactory("CheddaRewards");
   rewards = await CheddaRewards.deploy();
+  await rewards.deployed()
 
   await rewards.updateRegistry(registry.address)
   await registry.setRewards(rewards.address)

@@ -23,11 +23,12 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         uint256 amount
     );
     event LoanRepaid(
+        uint256 indexed loanID,
         address indexed repaidByBorrower,
         address indexed lender,
         uint256 repaymentAmount
     );
-    event LoanForeclosed(address indexed by, address indexed foreclosedOn);
+    event LoanForeclosed(uint256 indexed loanID, address indexed by, address indexed foreclosedOn);
 
     enum LoanState {
         all,
@@ -357,7 +358,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         );
         nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
         reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.borrower, 0);
-        emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
+        emit LoanRepaid(loanID, _msgSender(), loan.lender, loan.repaymentAmount);
     }
 
     function repay(uint256 loanID) public payable {
@@ -380,7 +381,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         nft.safeTransferFrom(address(this), loan.borrower, loan.tokenID);
         reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.borrower, 0);
 
-        emit LoanRepaid(_msgSender(), loan.lender, loan.repaymentAmount);
+        emit LoanRepaid(loanID, _msgSender(), loan.lender, loan.repaymentAmount);
     }
 
     /// @dev Forecloses on an open loan. Can only be called after loan expiry by the lender.
@@ -403,7 +404,7 @@ contract CheddaLoanManager is Ownable, IERC165, IERC721Receiver {
         nft.safeTransferFrom(address(this), loan.lender, loan.tokenID);
         reportTransfer(loan.nftContract, loan.tokenID, address(this), loan.lender, 0);
 
-        emit LoanForeclosed(_msgSender(), loan.borrower);
+        emit LoanForeclosed(loanID, _msgSender(), loan.borrower);
     }
 
     function getLoansBorrowed(address borrower, LoanState state)

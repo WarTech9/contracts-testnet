@@ -15,6 +15,7 @@ async function main() {
 
   const CheddaXP = await hre.ethers.getContractFactory("CheddaXP");
   cheddaXP = await CheddaXP.deploy();
+  await cheddaXP.deployed()
 
   await cheddaXP.updateRegistry(registry.address)
   await registry.setCheddaXP(cheddaXP.address)

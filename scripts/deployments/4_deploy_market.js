@@ -16,6 +16,7 @@ async function main() {
 
   const CheddaMarket = await hre.ethers.getContractFactory("CheddaMarket");
   market = await CheddaMarket.deploy();
+  await market.deployed()
 
   console.log("CheddaMarket deployed to:", market.address);
   await market.updateRegistry(registry.address)
