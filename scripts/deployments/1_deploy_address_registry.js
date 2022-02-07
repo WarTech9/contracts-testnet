@@ -16,9 +16,6 @@ async function main() {
   await save()
 }
 
-function checkGas() {
-  
-}
 async function save() {
   const provider = new ethers.providers.JsonRpcProvider();
   const network = await provider.getNetwork()

@@ -25,6 +25,8 @@ interface ICheddaAddressRegistry {
     function loanManager() external view returns (address);
 
     function wrappedNativeToken() external view returns (address);
+
+    function priceConsumer() external view returns (address);
 }
 
 interface IRegisteredContract {
@@ -47,6 +49,7 @@ contract CheddaAddressRegistry is Ownable {
     event DropsUpdated(address indexed newAddress, address indexed caller);
     event LoanManagerUpdated(address indexed newAddress, address indexed caller);
     event WrappedNativeTokenUpdated(address indexed tokenAddress, address indexed caller);
+    event PriceConsumerUpdated(address indexed consumerAddress, address indexed caller);
 
     address public cheddaXP;
     address public cheddaNFT;
@@ -60,6 +63,7 @@ contract CheddaAddressRegistry is Ownable {
     address public rewards;
     address public drops;
     address public loanManager;
+    address public priceConsumer;
     address public wrappedNativeToken;
 
     function setCheddaXP(address xp) external onlyOwner() {
@@ -125,5 +129,10 @@ contract CheddaAddressRegistry is Ownable {
     function setWrappedNativeToken(address tokenAddress) external onlyOwner() {
         wrappedNativeToken = tokenAddress;
         emit WrappedNativeTokenUpdated(tokenAddress, _msgSender());
+    }
+
+    function setPriceConsumer(address consumerAddress) external onlyOwner() {
+        priceConsumer = consumerAddress;
+        emit PriceConsumerUpdated(consumerAddress, _msgSender());
     }
 }
