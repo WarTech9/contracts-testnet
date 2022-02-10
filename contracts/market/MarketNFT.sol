@@ -129,6 +129,13 @@ contract MarketNFT is  ERC721Enumerable, Ownable {
     }
 
     /**
+     * @dev Returns the number of items in this collection
+     */
+    function numberOfItems() public view returns (uint256) {
+        return _tokenIds.current();
+    }
+
+    /**
      * @dev Sets `_tokenURI` as the tokenURI of `tokenId`.
      *
      * Requirements:

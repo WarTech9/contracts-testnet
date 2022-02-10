@@ -235,14 +235,14 @@ module.exports = {
       accounts: [privateKey, privateKey2],
       chainId: 4690,
       gas: 8500000,
-      gasPrice: 31000000000,
+      gasPrice: 1000000000000,
     },
     iotexmain: {
       url: "https://babel-api.mainnet.iotex.io",
       accounts: [privateKey, privateKey2],
       chainId: 4689,
       gas: 8500000,
-      gasPrice: 31000000000,
+      gasPrice: 1000000000000,
     },
     polygonmumbai: {
       // Infura
