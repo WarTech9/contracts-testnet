@@ -33,11 +33,18 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
       uint256[] tokenIds;
     }
 
+    // Events
+    event OnTokenWhitelisted(address indexed token, address indexed user);
+    event OnCollateralAdded(address indexed token, address indexed account, CollateralType ofType, uint256 amount);
+    event OnCollateralRemoved(address indexed token, address indexed account, CollateralType ofType, uint256 amount);
+    event OnLoanOpened(address account, uint256 amount);
+    event OnLoanRepaid(address account, uint256 amount);
+
     // total amount deposited by liquidity providers
     uint256 public deposits;
 
     // total amount borrowed
-    uint256 public borrowed;
+    uint256 public totalBorrowed;
 
     IPriceFeed public priceFeed;
 
@@ -55,7 +62,6 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     mapping(address => uint256) public accountBorrowed;
 
-
     constructor(
         ERC20 _asset,
         string memory _name,
@@ -65,16 +71,27 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     /*///////////////////////////////////////////////////////////////
                            ADMIN - WHITELIST TOKEN
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Whitelist a token as collateral
+    /// @dev Only tokens previously whitelisted can be added as collateral.
+    /// @param token token address
+    /// @param isWhitelisted If true, allow this token as collateral. If false, this token
+    /// can no longer be used as collateral
     function whitelistToken(address token, bool isWhitelisted)
         public
         onlyOwner
     {
         collateralTokens[token] = isWhitelisted;
         _updateCollateralTokenList(token, isWhitelisted);
+
+        emit OnTokenWhitelisted(token, msg.sender);
     }
 
+    /// @notice Total assets deposited as liquidity in this vault - amount borrowed
+    /// @dev this represents available liquidity in this vault
+    /// @return balance deposits - borrowed
     function assetBalance() public view returns (uint256 balance) {
-        balance = deposits - borrowed;
+        balance = deposits - totalBorrowed;
     }
 
     function getVaultStats() public view returns (VaultStats memory) {
@@ -111,7 +128,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     // rates
     function utilization() public view returns (uint32) {
-        return uint32(borrowed * BASIS_POINTS / deposits);
+        return uint32(totalBorrowed * BASIS_POINTS / deposits);
     }
 
     function depositApr() public pure returns (uint32) {
@@ -149,15 +166,30 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
             });
             accountCollateral[account][token] = collateral;
         }
-        ERC20(token).transferFrom(account, address(this), amount);
+
+        ERC20(token).safeTransferFrom(account, address(this), amount);
+
+        emit OnCollateralAdded(token, account, CollateralType.ERC20, amount);
     }
 
     function removeCollateral(address token, uint256 amount) public {
         address account = msg.sender;
         require(amount > 0, "CHVault: Invalid amount");
         require(accountCollateralCount(account, token) >= amount, "CHVault: INSUF Coll");
-        accountCollateral[account][token].amount -= amount;
-        ERC20(token).transfer(msg.sender, amount);
+
+        if (accountCollateralCount(account, token) == amount) {
+            delete accountCollateral[account][token];
+        } else {
+            accountCollateral[account][token].amount -= amount;
+        }
+
+        if (accountBorrowed[account] > totalAccountCollateralValue(account)) {
+            revert("CHVault: Not enough collateral");
+        }
+
+        ERC20(token).safeTransfer(msg.sender, amount);
+
+        emit OnCollateralRemoved(token, account, CollateralType.ERC20, amount);
     }
 
     function addCollateral721(address token, uint256[] memory tokenIds) public {
@@ -192,7 +224,43 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         for (uint256 i = 0; i < tokenIds.length; i++) {
           IERC721(token).transferFrom(account, address(this), tokenIds[i]);
         }
+
+        emit OnCollateralAdded(token, account, CollateralType.ERC721, tokenIds.length);
     }
+
+    function removeCollateral721(address token, uint256[] memory tokenIds) public {
+        require(collateralTokens[token] == true, "CHVault: Not whitelisted");
+        require(tokenIds.length > 0, "CHVault: Empty token list");
+        address account = msg.sender;
+        Collateral storage collateral = accountCollateral[account][token];
+        require(tokenIds.length >= collateral.amount, "CHVault: Invalid token IDs");
+        uint8 matchesFound = 0;
+
+        // make sure account is the owner of all the tokens in `tokenIds`
+        for (uint256 i = 0; i < collateral.tokenIds.length; i++) {
+            for (uint256 j = 0; j < tokenIds.length; j++) {
+               if (collateral.tokenIds[i] == tokenIds[j]) {
+                    IERC721(token).safeTransferFrom(address(this), account, tokenIds[j]);
+                    matchesFound += 1;
+               } 
+            }
+        }
+
+        // revert if any tokenIds are invalid
+        require(matchesFound == tokenIds.length, "CHVault: Invalid token ID");
+        accountCollateral[account][token].amount -= tokenIds.length;
+
+        if (accountBorrowed[account] > totalAccountCollateralValue(account)) {
+            revert("CHVault: Not enough collateral");
+        }
+
+        // transfer back collateral
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            IERC721(token).safeTransferFrom(address(this), account, tokenIds[i]);
+        }
+
+        emit OnCollateralRemoved(token, account, CollateralType.ERC721, tokenIds.length);
+    } 
 
     function accountHasCollateral(address account, address collateral) public view returns (bool) {
       return accountCollateral[account][collateral].token != address(0);
@@ -202,31 +270,45 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         return accountCollateral[account][collateral].amount;
     }
 
-    // borrows a loan
+    /// borrows a loan
+    /// @notice Takes out a loan
+    /// @dev The max amount a user can borrow must be less than the value of their collateral weighted
+    /// against the loan to value ratio of that colalteral.
+    /// @param amount The amount to borrow
     function take(uint256 amount) public {
         address account = msg.sender;
         // check collateral value > ltv (amount)
         uint256 collateralValue = totalAccountCollateralValue(account);
-        uint borrowedValue = 0;
 
-        // require collateralFactor * collateral >= amount + borrowed
-        // require(
-        //     accountBorrowed[account] + amount <= accountCollateral[account],
-        //     "Insufficient collateral"
-        // );
-        // borrowed += amount;
-        // accountBorrowed[account] += amount;
-        // asset.safeTransferFrom(address(this), account, amount);
+        // require collateralFactor * collateral >= amount + totalBorrowed
+        require(
+            accountBorrowed[account] + amount <= collateralValue, // TODO: this assumes 100% LTV, must multiply by max LTV
+            "Insufficient collateral"
+        );
+        totalBorrowed += amount;
+        accountBorrowed[account] += amount;
+        asset.safeTransferFrom(address(this), account, amount);
+
+        emit OnLoanOpened(account, amount);
     }
 
     // repays a loan
+    /// @notice Repays a part or all of a loan.
+    /// @param amount amount to repay. Must be > 0 and <= amount borrowed by sender
     function put(uint256 amount) public {
         address account = address(msg.sender);
-        borrowed -= amount;
+        require(amount != 0, "CHVault: Invalid amount");
+        require(amount <= accountBorrowed[account], "CHVault: amount too high");
+        totalBorrowed -= amount;
         accountBorrowed[account] -= amount;
         asset.safeTransferFrom(msg.sender, address(this), amount);
+
+        emit OnLoanRepaid(account, amount);
     }
 
+    /// @notice Get the current value of users collateral.
+    /// @param account Account to return collateral value for
+    /// @return current collateral value of users account
     function totalAccountCollateralValue(address account)
         public
         view
@@ -248,6 +330,20 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         return totalValue;
     }
 
+    /// @notice Checks if account is currently solvent.
+    /// @dev TODO: implement LTV rules 
+    /// @param account The account to check
+    /// @return `true` is account is currently solvent, `false` otherwise.
+    function _isSolvent(address account) internal returns (bool) {
+        // TODO: check value of collateral against amount borrowed.
+        // Also apply LTV rules. 
+        return accountBorrowed[account] < totalAccountCollateralValue(account);
+    }
+
+    /// @notice Updates the list of allowable collateral tokens.
+    /// @param token address of token to add or remove.
+    /// @param add if `true` add the `token` to whitelist, else remove the token.
+    /// adding a token which is already in the list has no effect. 
     function _updateCollateralTokenList(address token, bool add) internal {
         if (add) {
             for (uint256 i = 0; i < collateralTokenList.length; i++) {
