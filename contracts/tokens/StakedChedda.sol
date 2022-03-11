@@ -10,10 +10,13 @@ import { Chedda } from "./Chedda.sol";
 /// @dev Must be set as CHEDDA token vault for new token emission.
 contract sChedda is ERC4626 {
 
+    event Staked(address indexed account, uint256 amount, uint256 shares);
+    event Unstaked(address indexed account, uint256 amount, uint256 shares);
+
     Chedda public chedda;
 
     constructor(address _chedda) 
-    ERC4626(ERC20(_chedda), "Staked Chedda", "sChedda") {
+    ERC4626(ERC20(_chedda), "Staked Chedda", "sCHEDDA") {
         chedda = Chedda(_chedda);
     }
 
@@ -32,12 +35,12 @@ contract sChedda is ERC4626 {
         chedda.rebase();
     }
 
-    /// @notice Stake Chedda.
-    /// @param amount Amount to stake.
+    /// @notice Unstake Chedda.
+    /// @param shares Shares of sChedda to redeem
     /// @dev burns sChedda
-    /// @return shares Amount of sChedda burned.
-    function unstake(uint256 amount) public returns (uint256 shares) {
+    /// @return amount Amount of Chedda retruned by redeeming sChedda.
+    function unstake(uint256 shares) public returns (uint256 amount) {
         chedda.rebase();
-        shares = withdraw(amount, msg.sender, msg.sender);
+        amount = redeem(shares, msg.sender, msg.sender);
     }
 }

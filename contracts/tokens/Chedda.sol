@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import { ERC20 } from "./ERC20.sol";
@@ -8,8 +9,11 @@ interface IRebaseToken {
 
 contract Chedda is ERC20, IRebaseToken {
 
+    event VaultSet(address indexed vault, address indexed by);
+    event Rebased(address indexed vault, uint256 minted, uint256 totalSupply);
+    
     uint256 public constant DECIMALS = 18;
-    uint256 public constant INITIAL_SUPPLY = 1_000_000_000 * 10 ** DECIMALS;
+    uint256 public constant INITIAL_SUPPLY = 400_000_000 * 10 ** DECIMALS;
     uint256 public constant APR_PRECISION = 100_000;
 
     /// @notice Vault for new token emission
@@ -33,6 +37,7 @@ contract Chedda is ERC20, IRebaseToken {
     constructor(address account)
     ERC20("Chedda", "CHEDDA", 18) {
         _owner = msg.sender;
+        _lastRebase = block.timestamp;
         _mint(account, INITIAL_SUPPLY);
     }
 
@@ -46,7 +51,7 @@ contract Chedda is ERC20, IRebaseToken {
 
     /// @notice Increases token supply.
     function rebase() public override {
-        if (_lastRebase <= block.timestamp) {
+        if (_lastRebase >= block.timestamp) {
             return;
         }
 
@@ -55,6 +60,8 @@ contract Chedda is ERC20, IRebaseToken {
         _lastRebase = block.timestamp;
 
         _mint(tokenVault, amountToMint);
+
+        emit Rebased(tokenVault, amountToMint, totalSupply);
     }
 
     /// @notice Current APR
