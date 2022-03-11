@@ -1,56 +1,63 @@
 // const { expect } = require("chai");
-const { expect } = require("chai");
-const { BigNumber } = require("ethers");
-const { ethers } = require("hardhat");
-const { expectRevert } = require("@openzeppelin/test-helpers");
+const { ethers } = require('hardhat')
 
 let token
 let vault
-let account0;
-let account1;
+let account0
+let account1
 
 beforeEach(async function () {
-    const signers = await ethers.getSigners();
-    [account0, account1] = [signers[0], signers[1]];
+  const signers = await ethers.getSigners()
+  ;[account0, account1] = [signers[0], signers[1]]
 
+  const Token = await ethers.getContractFactory('Token')
+  token = await Token.deploy('USD Coin', 'USDC')
 
-    const Token = await ethers.getContractFactory("Token");
-    token = await Token.deploy("USD Coin", "USDC");
+  const ERC4626 = await ethers.getContractFactory('CheddaBaseTokenVault')
+  vault = await ERC4626.deploy(
+    token.address,
+    'ch' + (await token.name()),
+    await token.symbol()
+  )
+})
 
-    const ERC4626 = await ethers.getContractFactory("CheddaBaseTokenVault");
-    vault = await ERC4626.deploy(token.address, "ch" + await token.name(), await token.symbol());
+describe('ERC4626', () => {
 
-});
+    it('can get vault stats', async () => {
+        const stats = await vault.getVaultStats()
+        console.log('stats = ', stats)
+    })
 
-describe("ERC4626", () => {
-    it("can deposit", async () => {
-        let assetsPerShare = await vault.assetsPerShare()
-        console.log('assetsPerShare: ', assetsPerShare)
+  it('can deposit', async () => {
+    const assetsPerShare = await vault.assetsPerShare()
+    console.log('assetsPerShare: ', assetsPerShare)
 
-        const amount0 = ethers.utils.parseUnits("1200", "ether");
-        const amount1 = ethers.utils.parseUnits("1300", "ether");
+    const amount0 = ethers.utils.parseUnits('1200', 'ether')
+    const amount1 = ethers.utils.parseUnits('1300', 'ether')
 
-        await token.transfer(account1.address, amount1)
+    await token.transfer(account1.address, amount1)
 
-        await token.approve(vault.address, amount0)
-        const tx0 = await vault.deposit(amount0, account0.address)
-        await tx0.wait()
+    await token.approve(vault.address, amount0)
+    const tx0 = await vault.deposit(amount0, account0.address)
+    await tx0.wait()
 
-        await token.connect(account1).approve(vault.address, amount1)
-        const tx1 = await vault.connect(account1).deposit(amount1, account1.address);
-        await tx1.wait()
+    await token.connect(account1).approve(vault.address, amount1)
+    const tx1 = await vault.connect(account1).deposit(amount1, account1.address)
+    await tx1.wait()
 
+    const shares0 = await vault.balanceOf(account0.address)
+    console.log('shares0 = ', shares0)
 
-        let shares0 = await vault.balanceOf(account0.address)
-        console.log('shares0 = ', shares0)
+    let totalAssets = await vault.totalAssets()
+    console.log('totalShares = ', totalAssets)
 
-        let totalAssets = await vault.totalAssets()
-        console.log("totalShares = ", totalAssets)
+    const shares1 = await vault.balanceOf(account1.address)
+    console.log('shares1 = ', shares1)
 
-        let shares1 = await vault.balanceOf(account1.address)
-        console.log('shares1 = ', shares1)
+    totalAssets = await vault.totalAssets()
+    console.log('totalShares = ', totalAssets)
 
-        totalAssets = await vault.totalAssets()
-        console.log("totalShares = ", totalAssets)
-    });
+    const vaultStats = await vault.getVaultStats()
+    console.log('stats = ', vaultStats)
+  })
 })

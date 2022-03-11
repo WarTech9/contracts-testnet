@@ -9,9 +9,9 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// Only used in testnet for testing.
 contract WrappedNativeToken is ERC20 {
 
-    constructor(string memory name, string memory symbol, uint256 _totalSupply) 
+    constructor(string memory name, string memory symbol, address account, uint256 _totalSupply) 
     ERC20(name, symbol) {
-        _mint(msg.sender, _totalSupply);
+        _mint(account, _totalSupply);
     }
 
     function mint(address account, uint256 amount) public {

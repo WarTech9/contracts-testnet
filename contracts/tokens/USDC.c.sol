@@ -5,10 +5,8 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract USDC is ERC20 {
 
-    uint256 private _totalSupply = 100_000_000 ether;
-
-    constructor() ERC20("USDC Chedda Testnet", "USDC.c") {
-        _mint(msg.sender, _totalSupply);
+    constructor(address account, uint256 _totalSupply) ERC20("USDC Chedda Testnet", "USDC.c") {
+        _mint(account, _totalSupply);
     }
 
     function mint(address account, uint256 amount) public {

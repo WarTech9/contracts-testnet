@@ -128,7 +128,11 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     // rates
     function utilization() public view returns (uint32) {
-        return uint32(totalBorrowed * BASIS_POINTS / deposits);
+        if (deposits == 0) {
+            return 0;
+        } else {
+            return uint32(totalBorrowed * BASIS_POINTS / deposits);
+        }
     }
 
     function depositApr() public pure returns (uint32) {
@@ -334,7 +338,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     /// @dev TODO: implement LTV rules 
     /// @param account The account to check
     /// @return `true` is account is currently solvent, `false` otherwise.
-    function _isSolvent(address account) internal returns (bool) {
+    function _isSolvent(address account) internal view returns (bool) {
         // TODO: check value of collateral against amount borrowed.
         // Also apply LTV rules. 
         return accountBorrowed[account] < totalAccountCollateralValue(account);

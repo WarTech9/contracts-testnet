@@ -4,6 +4,8 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ICheddaAddressRegistry {
+    function chedda() external view returns (address);
+
     function cheddaXP() external view returns (address);
 
     function cheddaNFT() external view returns (address);
@@ -38,6 +40,7 @@ interface IRegisteredContract {
 
 contract CheddaAddressRegistry is Ownable {
 
+    event CheddaUpdated(address indexed newAddress, address indexed caller);
     event CheddaXPUpdated(address indexed newAddress, address indexed caller);
     event DappStoreUpdated(address indexed newAddress, address indexed caller);
     event DappExplorerUpdated(address indexed newAddress, address indexed caller);
@@ -54,6 +57,7 @@ contract CheddaAddressRegistry is Ownable {
     event PriceConsumerUpdated(address indexed consumerAddress, address indexed caller);
     event NFTFactoryUpdated(address indexed factoryAddress, address indexed caller);
 
+    address public chedda;
     address public cheddaXP;
     address public cheddaNFT;
     address public dappStore;
@@ -69,6 +73,11 @@ contract CheddaAddressRegistry is Ownable {
     address public priceConsumer;
     address public nftFactory;
     address public wrappedNativeToken;
+
+    function setChedda(address _chedda) external onlyOwner() {
+        chedda = _chedda;
+        emit CheddaUpdated(cheddaXP, _msgSender());
+    }
 
     function setCheddaXP(address xp) external onlyOwner() {
         cheddaXP = xp;

@@ -21,9 +21,6 @@ contract Faucet {
     /// @dev token address => user address => last dripped time
     mapping (address => mapping (address => uint256)) public lastDripped;
 
-    /// @notice Token balances
-    mapping (address => uint256) private balances;
-
     /// @notice The minimum period an account must wait to be refilled.
     uint256 public minDripTimeout = 1 days;
     
@@ -43,7 +40,7 @@ contract Faucet {
     /// @param token Address to token to return balanc for.
     /// @return return balance of `token` in this address
     function balanceOf(address token) public view returns (uint256) {
-        return balances[token];
+        return ERC20(token).balanceOf(address(this));
     }
 
     /// @dev Anyone can fill the faucet.
@@ -56,6 +53,10 @@ contract Faucet {
         ERC20(token).transfer(recipient, dripAmount);
 
         emit TokensSent(token, recipient, dripAmount);
+    }
+
+    function amountToDrip() public view returns (uint256) {
+        return dripAmount;
     }
 
 }
