@@ -16,4 +16,4 @@ coverage.json
 
 # contract addresses
 unknown-*.json
-dapps
+/dapps

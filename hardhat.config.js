@@ -105,7 +105,7 @@ module.exports = {
   networks: {
     hardhat: {
       initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
-      chainId: 1337,
+      chainId: 31337,
     },
     localhost: {
       url: 'http://localhost:8545',
@@ -114,7 +114,7 @@ module.exports = {
         '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
         '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
       ],
-      chainId: 31337,
+      chainId: 1337,
       gas: 8500000,
       gasPrice: 1000000000000,
       blockGasLimit: 124500000,
