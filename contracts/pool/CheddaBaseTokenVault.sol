@@ -33,6 +33,12 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
       uint256[] tokenIds;
     }
 
+    struct CollateralValue {
+        address token;
+        uint256 amount;
+        int256 value;
+    }
+
     // Events
     event OnTokenWhitelisted(address indexed token, address indexed user);
     event OnCollateralAdded(address indexed token, address indexed account, CollateralType ofType, uint256 amount);
@@ -52,6 +58,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     // token address => is whitelisted
     mapping(address => bool) public collateralTokens;
+
     address[] public collateralTokenList;
 
     // Determines Loan to Value ratio for token
@@ -59,8 +66,11 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     // account => token => amount
     mapping(address => mapping(address => Collateral)) public accountCollateral;
-
+    
     mapping(address => uint256) public accountBorrowed;
+
+    // token address => Collateral amount
+    mapping(address => uint256) public tokenCollateral;
 
     constructor(
         ERC20 _asset,
@@ -158,6 +168,8 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         require(amount > 0, "CHVault: Invalid amount");
         address account = msg.sender;
 
+        tokenCollateral[token] += amount;
+
         // add collateral to account
         if (accountHasCollateral(account, token)) {
             accountCollateral[account][token].amount += amount;
@@ -180,6 +192,8 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         address account = msg.sender;
         require(amount > 0, "CHVault: Invalid amount");
         require(accountCollateralCount(account, token) >= amount, "CHVault: INSUF Coll");
+
+        tokenCollateral[token] -= amount;
 
         if (accountCollateralCount(account, token) == amount) {
             delete accountCollateral[account][token];
@@ -272,6 +286,21 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     function accountCollateralCount(address account, address collateral) public view returns (uint256) {
         return accountCollateral[account][collateral].amount;
+    }
+
+    function collateralAmounts() public view returns (CollateralValue[] memory) {
+        CollateralValue[] memory collateralValues = new CollateralValue[](collateralTokenList.length);
+        for (uint256 i = 0; i < collateralTokenList.length; i++) {
+            address token = collateralTokenList[i];
+            uint256 collateralAmount = tokenCollateral[token];
+            CollateralValue memory cValue = CollateralValue({
+                token: token,
+                amount: collateralAmount,
+                value: 0 // priceFeed.getLatestPrice(token, 1) // TODO: value from oracle price
+            });
+            collateralValues[i] = cValue;
+        }
+        return collateralValues;
     }
 
     /// borrows a loan
