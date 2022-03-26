@@ -2,8 +2,9 @@
 pragma solidity ^0.8.9;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import { IPriceFeed } from "./IPriceFeed.sol";
 
-contract ChainlinkPriceConsumerV3 {
+contract ChainlinkPriceConsumerV3 is IPriceFeed {
 
     AggregatorV3Interface internal priceFeed;
 
@@ -24,5 +25,12 @@ contract ChainlinkPriceConsumerV3 {
             uint80 answeredInRound
         ) = priceFeed.latestRoundData();
         return price;
+    }
+
+    function readPrice(address token, uint256 tokenID) public override view returns (int) {
+        // silence
+        token;
+        tokenID;
+        return getLatestPrice();
     }
 }

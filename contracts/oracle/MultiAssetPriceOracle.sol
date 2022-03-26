@@ -1,10 +1,7 @@
 //SPDX-License-Identifier: AGPLv3
 pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
-
-interface IPriceFeed {
-    function getLatestPrice(address token, uint256 tokenID) external view returns (int);
-}
+import { IPriceFeed } from "./IPriceFeed.sol";
 
 contract MultiAssetPriceOracle is Ownable, IPriceFeed {
 
@@ -19,10 +16,10 @@ contract MultiAssetPriceOracle is Ownable, IPriceFeed {
     // TODO: use Chainlink price consumer
     /// @dev Explain to a developer any extra details
     /// @return Returns the latest price
-    function getLatestPrice(address token, uint256 tokenID) public override view returns (int) {
+    function readPrice(address token, uint256 tokenID) public override view returns (int) {
         IPriceFeed priceFeed = priceFeeds[token];
         require(address(priceFeed) != address(0), "No price feed");
-        int price = priceFeed.getLatestPrice(token, tokenID);
+        int price = priceFeed.readPrice(token, tokenID);(token, tokenID);
         return price;
     }
 }
