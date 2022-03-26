@@ -1,10 +1,10 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+//SPDX-License-Identifier: AGPLv3
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../rewards/CheddaRewards.sol";
+import "../legacy/rewards/CheddaRewards.sol";
 import "../common/CheddaAddressRegistry.sol";
 import "./CheddaMarket.sol";
 import "./MarketNFT.sol";

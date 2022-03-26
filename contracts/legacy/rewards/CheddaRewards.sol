@@ -1,8 +1,8 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+//SPDX-License-Identifier: AGPLv3
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../common/CheddaAddressRegistry.sol";
+import "../../common/CheddaAddressRegistry.sol";
 import "./CheddaCampaign.sol";
 import "./CheddaNFT.sol";
 import "./CheddaXP.sol";

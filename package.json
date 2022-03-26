@@ -25,6 +25,8 @@
     "solidity-coverage": "^0.7.17"
   },
   "dependencies": {
+    "@api3/airnode-protocol": "^0.5.0",
+    "@api3/services": "^0.1.6",
     "@appliedblockchain/chainlink-contracts": "^0.0.4",
     "@appliedblockchain/chainlink-plugins-fund-link": "^0.0.3",
     "@chainlink/contracts": "^0.3.0",

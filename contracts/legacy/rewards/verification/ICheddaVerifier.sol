@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+//SPDX-License-Identifier: AGPLv3
+pragma solidity ^0.8.9;
 
 interface ICheddaVerifier {
     function requestVerification(address user, bytes memory token) external returns(bytes32);

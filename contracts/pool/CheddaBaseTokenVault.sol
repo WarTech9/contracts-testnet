@@ -1,17 +1,18 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+//SPDX-License-Identifier: AGPLv3
+pragma solidity ^0.8.9;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC4626} from "../tokens/ERC4626.sol";
 import {ERC20} from "../tokens/ERC20.sol";
-import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
-import {MultiAssetPriceOracle, IPriceFeed} from "./MultiAssetPriceOracle.sol";
+import {SafeTransferLib} from "../libs/SafeTransferLib.sol";
+import {MultiAssetPriceOracle, IPriceFeed} from "../oracle/MultiAssetPriceOracle.sol";
 
 contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     // Basis used for all rate calculations. 100_000 == 100%
     uint32 constant public BASIS_POINTS = 100_000;
+    uint32 constant public MAX_LTV = 70_000;
 
     struct VaultStats {
         uint256 liquidity;
@@ -311,13 +312,8 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     function take(uint256 amount) public {
         address account = msg.sender;
         // check collateral value > ltv (amount)
-        uint256 collateralValue = totalAccountCollateralValue(account);
+        _validateBorrow(account, amount);
 
-        // require collateralFactor * collateral >= amount + totalBorrowed
-        require(
-            accountBorrowed[account] + amount <= collateralValue, // TODO: this assumes 100% LTV, must multiply by max LTV
-            "Insufficient collateral"
-        );
         totalBorrowed += amount;
         accountBorrowed[account] += amount;
         asset.safeTransferFrom(address(this), account, amount);
@@ -353,7 +349,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
             Collateral memory collateral = accountCollateral[account][token];
             if (accountHasCollateral(account, token)) {
                 uint256 amount = collateral.amount;
-                int collateralValue = priceFeed.getLatestPrice(token, amount);
+                uint256 collateralValue = _getTokenValue(token, amount);
                 if (collateralValue > 0) {
                     totalValue += uint256(collateralValue);
                 }
@@ -363,6 +359,11 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         return totalValue;
     }
 
+    function _getTokenValue(address token, uint256 amount) internal view returns (uint256) {
+        int256 price = priceFeed.getLatestPrice(token, 0);
+        require(price > 0, "CHVault: Invalid price");
+        return uint256(price) * amount;
+    }
     /// @notice Checks if account is currently solvent.
     /// @dev TODO: implement LTV rules 
     /// @param account The account to check
@@ -371,6 +372,15 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         // TODO: check value of collateral against amount borrowed.
         // Also apply LTV rules. 
         return accountBorrowed[account] < totalAccountCollateralValue(account);
+    }
+
+    function _validateBorrow(address account, uint256 amount) internal view {
+        require (amount != 0, "Invalid amount");
+        require (account != address(0), "Invalid address");
+        uint256 maxLTV = 10000 * 0.75;
+        uint256 collateralValue = totalAccountCollateralValue(account);
+        uint256 newTotalBorrow = accountBorrowed[account] + amount;
+        require (newTotalBorrow < collateralValue * maxLTV, "Not enough collateral");
     }
 
     /// @notice Updates the list of allowable collateral tokens.
