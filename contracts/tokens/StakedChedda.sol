@@ -16,7 +16,7 @@ contract StakedChedda is ERC4626 {
     Chedda public chedda;
 
     constructor(address _chedda) 
-    ERC4626(ERC20(_chedda), "Staked Chedda", "sCHEDDA") {
+    ERC4626(ERC20(_chedda), "Staked Chedda", "xCHEDDA") {
         chedda = Chedda(_chedda);
     }
 
