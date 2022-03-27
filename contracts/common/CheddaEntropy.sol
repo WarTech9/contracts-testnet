@@ -11,12 +11,12 @@ contract CheddaEntropy is IEntropy {
 
     mapping (bytes32 => uint256[]) public tokenIds;
 
-    function addEntropy() public override {
+    function addEntropy() external override {
         bytes32 currentEventHash = keccak256(abi.encodePacked(msg.sender, block.timestamp));
         currentEntropy = keccak256(abi.encodePacked(currentEventHash, currentEntropy));
     }
 
-    function randomNumber(uint256 max) public override view returns (uint256) {
+    function randomNumber(uint256 max) external override view returns (uint256) {
         return uint(currentEntropy) % max;
     }
 
@@ -27,13 +27,5 @@ contract CheddaEntropy is IEntropy {
     function idsWithProperty(string memory property) public view returns(uint256[] memory) {
         bytes32 packed = keccak256(abi.encode(property));
         return tokenIds[packed];
-    }
-
-    function save(string[] memory properties, uint256 tokenId) public {
-        for (uint256 i = 0; i < properties.length; i++) {
-            string memory prop = properties[i];
-            bytes32 packed = keccak256(abi.encode(prop));
-            tokenIds[packed].push(tokenId);
-        }
     }
 }

@@ -9,7 +9,6 @@ interface Mintable is IERC20 {
 
 /// @title Faucet
 /// @notice Faucet for slowly emitting tokens deposited. Used for testing.
-/// @dev Explain to a developer any extra details
 contract Faucet {
 
     uint256 public dripAmount = 1_000 * 10 ** 18;
@@ -29,7 +28,7 @@ contract Faucet {
     /// @param token Address token of faucet to fill.
     /// @param amount Amount to refill with.
     /// param amount Amount to fill the token with.
-    function fill(address token, uint256 amount) public {
+    function fill(address token, uint256 amount) external {
         ERC20(token).transferFrom(msg.sender, address(this), amount);
         
         emit TokensReceived(token, msg.sender, amount);
@@ -39,13 +38,13 @@ contract Faucet {
     /// @dev Explain to a developer any extra details
     /// @param token Address to token to return balanc for.
     /// @return return balance of `token` in this address
-    function balanceOf(address token) public view returns (uint256) {
+    function balanceOf(address token) external view returns (uint256) {
         return ERC20(token).balanceOf(address(this));
     }
 
     /// @dev Anyone can fill the faucet.
     /// @param token token to drip
-    function drip(address token) public {
+    function drip(address token) external {
         address recipient = msg.sender;
 
         require(block.timestamp > lastDripped[token][recipient] + minDripTimeout, "CHFaucet: Must wait");
@@ -55,7 +54,7 @@ contract Faucet {
         emit TokensSent(token, recipient, dripAmount);
     }
 
-    function amountToDrip() public view returns (uint256) {
+    function amountToDrip() external view returns (uint256) {
         return dripAmount;
     }
 

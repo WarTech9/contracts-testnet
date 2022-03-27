@@ -8,9 +8,10 @@ contract API3BeaconReader is IPriceFeed {
     IRrpBeaconServer public immutable rrpBeaconServer;
     bytes32 public immutable beacon;
 
-    constructor(address rrpBeaconServerAddress) {
+    constructor(address rrpBeaconServerAddress, bytes32 _beacon) {
         require(rrpBeaconServerAddress != address(0), "Zero address");
         rrpBeaconServer = IRrpBeaconServer(rrpBeaconServerAddress);
+        beacon = _beacon;
     }
 
     function readBeacon(bytes32 beaconId)
@@ -24,7 +25,7 @@ contract API3BeaconReader is IPriceFeed {
         // silence
         token;
         tokenID;
-        int _timestamp;
-        (value, _timestamp) = readBeacon(beacon);
+        (int224 _value, uint _timestamp) = readBeacon(beacon);
+        value = int256(_value);
     }
 }

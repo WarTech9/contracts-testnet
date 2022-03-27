@@ -8,9 +8,11 @@ import { ERC20 } from "../tokens/ERC20.sol";
 import { SafeTransferLib } from "../lib/SafeTransferLib.sol";
 import { FixedPointMathLib } from "../lib/FixedPointMathLib.sol";
 import { ICheddaDebtToken, CheddaDebtToken } from "../tokens/CheddaDebtToken.sol";
-import { IInterestRateModel } from "./InterestRateModel.sol";
 import { IPriceFeed, MultiAssetPriceOracle } from "../oracle/MultiAssetPriceOracle.sol";
+import { IInterestRateModel } from "./InterestRateModel.sol";
 
+/// @title CheddaBaseTokenVault
+/// @notice Represents a lending pool on the Chedda platform.
 contract CheddaBaseTokenVault is Ownable, ERC4626 {
 
     struct VaultStats {
@@ -68,6 +70,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     // token address => Debt token
     // mapping(address => address) public debtTokens;
 
+    // list of tokens that can be used as collateral
     address[] public collateralTokenList;
 
     // Determines Loan to Value ratio for token
@@ -142,7 +145,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     }
 
     function totalAssets() public view override returns (uint256) {
-        return deposits; // TODO: deposits + accrued interest
+        return deposits;
     }
 
     // rates
@@ -159,7 +162,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     }
 
     function rewardsApr() public pure returns (uint128) {
-      return  950 * 100_000 / 100; // 9.5%
+      return  950 * 100_000 / 100; // 9.5% // TODO: dynamic rewards
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -310,6 +313,58 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         return collateralValues;
     }
 
+    /// @notice Get the current value of users collateral.
+    /// @param account Account to return collateral value for
+    /// @return current collateral value of users account
+    function totalAccountCollateralValue(address account)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 totalValue = 0;
+        for (uint256 i = 0; i < collateralTokenList.length; i++) {
+            address token = collateralTokenList[i];
+            Collateral memory collateral = accountCollateral[account][token];
+            if (accountHasCollateral(account, token)) {
+                uint256 amount = collateral.amount;
+                uint256 collateralValue = _getTokenValue(token, amount);
+                if (collateralValue > 0) {
+                    totalValue += uint256(collateralValue);
+                }
+            }
+        }
+
+        return totalValue;
+    }
+
+    /// @notice Updates the list of allowable collateral tokens.
+    /// @param token address of token to add or remove.
+    /// @param add if `true` add the `token` to whitelist, else remove the token.
+    /// adding a token which is already in the list has no effect. 
+    function _updateCollateralTokenList(address token, bool add) internal {
+        if (add) {
+            for (uint256 i = 0; i < collateralTokenList.length; i++) {
+                if (collateralTokenList[i] == token) {
+                    return; // already added
+                }
+            }
+            collateralTokenList.push(token);
+        } else {
+            for (uint256 i = 0; i < collateralTokenList.length; i++) {
+                if (collateralTokenList[i] == token) {
+                    collateralTokenList[i] = collateralTokenList[
+                        collateralTokenList.length - 1
+                    ];
+                    collateralTokenList.pop();
+                }
+            }
+        }
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                        borrow/repay logic
+    //////////////////////////////////////////////////////////////*/
+
     /// borrows a loan
     /// @notice Takes out a loan
     /// @dev The max amount a user can borrow must be less than the value of their collateral weighted
@@ -353,30 +408,6 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         emit OnLoanRepaid(account, amount);
     }
 
-    /// @notice Get the current value of users collateral.
-    /// @param account Account to return collateral value for
-    /// @return current collateral value of users account
-    function totalAccountCollateralValue(address account)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 totalValue = 0;
-        for (uint256 i = 0; i < collateralTokenList.length; i++) {
-            address token = collateralTokenList[i];
-            Collateral memory collateral = accountCollateral[account][token];
-            if (accountHasCollateral(account, token)) {
-                uint256 amount = collateral.amount;
-                uint256 collateralValue = _getTokenValue(token, amount);
-                if (collateralValue > 0) {
-                    totalValue += uint256(collateralValue);
-                }
-            }
-        }
-
-        return totalValue;
-    }
-
     function totalBorrowed() public view returns (uint256 amount) {
         amount = debtToken.totalBorrowed();
     }
@@ -408,29 +439,5 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         uint256 collateralValue = totalAccountCollateralValue(account);
         uint256 newTotalBorrow = accountPendingAmount(account) + amount;
         require (newTotalBorrow < collateralValue * maxLTV, "Not enough collateral");
-    }
-
-    /// @notice Updates the list of allowable collateral tokens.
-    /// @param token address of token to add or remove.
-    /// @param add if `true` add the `token` to whitelist, else remove the token.
-    /// adding a token which is already in the list has no effect. 
-    function _updateCollateralTokenList(address token, bool add) internal {
-        if (add) {
-            for (uint256 i = 0; i < collateralTokenList.length; i++) {
-                if (collateralTokenList[i] == token) {
-                    return; // already added
-                }
-            }
-            collateralTokenList.push(token);
-        } else {
-            for (uint256 i = 0; i < collateralTokenList.length; i++) {
-                if (collateralTokenList[i] == token) {
-                    collateralTokenList[i] = collateralTokenList[
-                        collateralTokenList.length - 1
-                    ];
-                    collateralTokenList.pop();
-                }
-            }
-        }
     }
 }
