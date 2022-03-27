@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC20} from "./ERC20.sol";
-import {SafeTransferLib} from "../libs/SafeTransferLib.sol";
-import {FixedPointMathLib} from "../libs/FixedPointMathLib.sol";
+import { ERC20 } from "./ERC20.sol";
+import { SafeTransferLib } from "../lib/SafeTransferLib.sol";
+import { FixedPointMathLib } from "../lib/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4646 tokenized Vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
@@ -58,7 +58,7 @@ abstract contract ERC4626 is ERC20 {
         afterDeposit(amount, shares);
     }
 
-    function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
+    function mint(uint256 shares, address to) internal virtual returns (uint256 amount) {
         amount = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
 
         // Need to transfer before minting or ERC777s could reenter.

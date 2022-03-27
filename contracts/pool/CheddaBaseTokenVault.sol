@@ -1,25 +1,24 @@
 //SPDX-License-Identifier: AGPLv3
 pragma solidity ^0.8.9;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC4626} from "../tokens/ERC4626.sol";
-import {ERC20} from "../tokens/ERC20.sol";
-import {SafeTransferLib} from "../libs/SafeTransferLib.sol";
-import {MultiAssetPriceOracle, IPriceFeed} from "../oracle/MultiAssetPriceOracle.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { ERC4626 } from "../tokens/ERC4626.sol";
+import { ERC20 } from "../tokens/ERC20.sol";
+import { SafeTransferLib } from "../lib/SafeTransferLib.sol";
+import { FixedPointMathLib } from "../lib/FixedPointMathLib.sol";
+import { ICheddaDebtToken, CheddaDebtToken } from "../tokens/CheddaDebtToken.sol";
+import { IInterestRateModel } from "./InterestRateModel.sol";
+import { IPriceFeed, MultiAssetPriceOracle } from "../oracle/MultiAssetPriceOracle.sol";
 
 contract CheddaBaseTokenVault is Ownable, ERC4626 {
-
-    // Basis used for all rate calculations. 100_000 == 100%
-    uint32 constant public BASIS_POINTS = 100_000;
-    uint32 constant public MAX_LTV = 70_000;
 
     struct VaultStats {
         uint256 liquidity;
         uint256 utilization;
-        uint32 depositApr;
-        uint32 borrowApr;
-        uint32 rewardsApr;
+        uint128 depositApr;
+        uint128 borrowApr;
+        uint128 rewardsApr;
     }
     enum CollateralType {
       ERC20,
@@ -47,18 +46,27 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     event OnLoanOpened(address account, uint256 amount);
     event OnLoanRepaid(address account, uint256 amount);
 
+    using SafeTransferLib for ERC20;
+    using FixedPointMathLib for uint256;
+    
     // total amount deposited by liquidity providers
     uint256 public deposits;
 
-    // total amount borrowed
-    uint256 public totalBorrowed;
-
     IPriceFeed public priceFeed;
 
-    using SafeTransferLib for ERC20;
+    uint256 constant public PECISION = 1e18;
+    uint256 constant public MAX_LTV = 7 * 1e17; // 70%
+    int256 public borrowFee = 3 * 1e15; // 0.3%;
 
     // token address => is whitelisted
     mapping(address => bool) public collateralTokens;
+
+    ICheddaDebtToken public debtToken;
+    IInterestRateModel public interestRateModel;
+
+    // use mapping to support multi-asset lending pool
+    // token address => Debt token
+    // mapping(address => address) public debtTokens;
 
     address[] public collateralTokenList;
 
@@ -68,8 +76,6 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     // account => token => amount
     mapping(address => mapping(address => Collateral)) public accountCollateral;
     
-    mapping(address => uint256) public accountBorrowed;
-
     // token address => Collateral amount
     mapping(address => uint256) public tokenCollateral;
 
@@ -77,7 +83,9 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         ERC20 _asset,
         string memory _name,
         string memory _symbol
-    ) ERC4626(_asset, _name, _symbol) {}
+    ) ERC4626(_asset, _name, _symbol) {
+        debtToken = new CheddaDebtToken(asset, address(this));
+    }
 
     /*///////////////////////////////////////////////////////////////
                            ADMIN - WHITELIST TOKEN
@@ -89,7 +97,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     /// @param isWhitelisted If true, allow this token as collateral. If false, this token
     /// can no longer be used as collateral
     function whitelistToken(address token, bool isWhitelisted)
-        public
+        external
         onlyOwner
     {
         collateralTokens[token] = isWhitelisted;
@@ -102,10 +110,10 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     /// @dev this represents available liquidity in this vault
     /// @return balance deposits - borrowed
     function assetBalance() public view returns (uint256 balance) {
-        balance = deposits - totalBorrowed;
+        balance = deposits - totalBorrowed();
     }
 
-    function getVaultStats() public view returns (VaultStats memory) {
+    function getVaultStats() external view returns (VaultStats memory) {
       VaultStats memory stats =  VaultStats({
         liquidity: totalAssets(),
         utilization: utilization(),
@@ -138,23 +146,19 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     }
 
     // rates
-    function utilization() public view returns (uint32) {
-        if (deposits == 0) {
-            return 0;
-        } else {
-            return uint32(totalBorrowed * BASIS_POINTS / deposits);
-        }
+    function utilization() public view returns (uint256 utilized) {
+        utilized  = totalBorrowed().divWadUp(totalAssets());
     }
 
-    function depositApr() public pure returns (uint32) {
-        return 375 * 100_000 / 100; // TODO: make dynamic based on supply/demand. 3.75%
+    function depositApr() public view returns (uint128) {
+        return interestRateModel.depositAPR();
     }
 
-    function borrowApr() public pure returns (uint32) {
-      return  589 * 100_000 / 100; // TODO: make dynamic. 5.89%
+    function borrowApr() public view returns (uint128) {
+      return  interestRateModel.borrowAPR();
     }
 
-    function rewardsApr() public pure returns (uint32) {
+    function rewardsApr() public pure returns (uint128) {
       return  950 * 100_000 / 100; // 9.5%
     }
 
@@ -202,7 +206,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
             accountCollateral[account][token].amount -= amount;
         }
 
-        if (accountBorrowed[account] > totalAccountCollateralValue(account)) {
+        if (accountPendingAmount(account) > totalAccountCollateralValue(account)) {
             revert("CHVault: Not enough collateral");
         }
 
@@ -269,7 +273,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         require(matchesFound == tokenIds.length, "CHVault: Invalid token ID");
         accountCollateral[account][token].amount -= tokenIds.length;
 
-        if (accountBorrowed[account] > totalAccountCollateralValue(account)) {
+        if (accountPendingAmount(account) > totalAccountCollateralValue(account)) {
             revert("CHVault: Not enough collateral");
         }
 
@@ -294,10 +298,12 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         for (uint256 i = 0; i < collateralTokenList.length; i++) {
             address token = collateralTokenList[i];
             uint256 collateralAmount = tokenCollateral[token];
+            int256 price = priceFeed.readPrice(token, 0);
+            int256 value = price * int256(collateralAmount);
             CollateralValue memory cValue = CollateralValue({
                 token: token,
                 amount: collateralAmount,
-                value: 0 // priceFeed.getLatestPrice(token, 1) // TODO: value from oracle price
+                value: value
             });
             collateralValues[i] = cValue;
         }
@@ -314,23 +320,35 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         // check collateral value > ltv (amount)
         _validateBorrow(account, amount);
 
-        totalBorrowed += amount;
-        accountBorrowed[account] += amount;
+        debtToken.createDebt(amount, account);
         asset.safeTransferFrom(address(this), account, amount);
-
         emit OnLoanOpened(account, amount);
     }
 
     // repays a loan
     /// @notice Repays a part or all of a loan.
     /// @param amount amount to repay. Must be > 0 and <= amount borrowed by sender
-    function put(uint256 amount) public {
+    function putAmount(uint256 amount) public {
         address account = address(msg.sender);
         require(amount != 0, "CHVault: Invalid amount");
-        require(amount <= accountBorrowed[account], "CHVault: amount too high");
-        totalBorrowed -= amount;
-        accountBorrowed[account] -= amount;
+        require(amount <= accountPendingAmount(account), "CHVault: amount too high");
         asset.safeTransferFrom(msg.sender, address(this), amount);
+        debtToken.repayAmount(amount, account);
+
+        emit OnLoanRepaid(account, amount);
+    }
+
+    // repays a loan
+    /// @notice Repays a part or all of a loan.
+    /// @param shares The share of debt token to repay.
+    function putShares(uint256 shares) public {
+        address account = address(msg.sender);
+        require(shares != 0, "CHVault: Invalid amount");
+        require(shares <= debtToken.accountShare(account), "CHVault: shares too high");
+        
+        uint256 amount = debtToken.amountForShares(shares);
+        asset.safeTransferFrom(msg.sender, address(this), amount);
+        debtToken.repayShare(shares, account);
 
         emit OnLoanRepaid(account, amount);
     }
@@ -359,8 +377,17 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         return totalValue;
     }
 
+    function totalBorrowed() public view returns (uint256 amount) {
+        amount = debtToken.totalBorrowed();
+    }
+
+    function accountPendingAmount(address account) public view returns (uint256 borrowed) {
+        uint256 shares = debtToken.accountShare(account);
+        borrowed = debtToken.amountForShares(shares);
+    }
+
     function _getTokenValue(address token, uint256 amount) internal view returns (uint256) {
-        int256 price = priceFeed.getLatestPrice(token, 0);
+        int256 price = priceFeed.readPrice(token, 0);
         require(price > 0, "CHVault: Invalid price");
         return uint256(price) * amount;
     }
@@ -371,7 +398,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
     function _isSolvent(address account) internal view returns (bool) {
         // TODO: check value of collateral against amount borrowed.
         // Also apply LTV rules. 
-        return accountBorrowed[account] < totalAccountCollateralValue(account);
+        return accountPendingAmount(account) < totalAccountCollateralValue(account);
     }
 
     function _validateBorrow(address account, uint256 amount) internal view {
@@ -379,7 +406,7 @@ contract CheddaBaseTokenVault is Ownable, ERC4626 {
         require (account != address(0), "Invalid address");
         uint256 maxLTV = 10000 * 0.75;
         uint256 collateralValue = totalAccountCollateralValue(account);
-        uint256 newTotalBorrow = accountBorrowed[account] + amount;
+        uint256 newTotalBorrow = accountPendingAmount(account) + amount;
         require (newTotalBorrow < collateralValue * maxLTV, "Not enough collateral");
     }
 
